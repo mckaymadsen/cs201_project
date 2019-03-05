@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "UI.h"
 
-void display_main_menu()
+void display_start()
 {
     printf("\n\n");
     printf("\tCS 201 - Spring 2018 - Portfolio Project\n");

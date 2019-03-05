@@ -31,7 +31,8 @@ long hash_function(char title[100]);
 int main() 
 {
 
-	display_main_menu();
+	display_start();
+	
 	//Load Dataset
 	printf("\n\tLoading dataset ");
 	load_database();
@@ -46,7 +47,7 @@ int main()
 void load_database()
 {
 	FILE *fptr;								//create the file opener
-	fptr = fopen("test_data.txt", "r");	//open database 
+	fptr = fopen("test_data.txt", "r");		//open database 
 
 	int i = 0;
 	while (i < num_elements)				//Read until number of items is complete (bad way, but it works)
@@ -62,7 +63,7 @@ void load_database()
 			item->id, 	item->style, item->title, &item->year, item->run_time, &item->average_rating, &item->num_votes, item->genre
 		);
 
-		long hash_index = item->key;				//get hash_index
+		long hash_index = item->key;		//get hash_index
 		//add item to hash table
 		while(hash_array[hash_index] != NULL && hash_array[hash_index]->key != -1)
 		{
