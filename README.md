@@ -5,7 +5,7 @@ movie database (downloaded from https://www.imdb.com/interfaces/).
 
 ## Dataset
 
-The specific dataset used can be downloaded from the following link: LINK HERE
+The specific dataset used can be downloaded from the following link (hosted on UA Box): [LINK HERE](https://alabama.box.com/s/3nfuwbggvmhfvruze87fqa7i2soh8mon)
 
 This datset combines the "basic" and "ratings" datasets found on IMDB's website.
 
