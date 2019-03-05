@@ -73,10 +73,10 @@ void load_database()
 		}
 		hash_array[hash_index] = item;
 
-		printf("\n%s, %s, %s, %d, %s, %f, %d, %s\n",
+		/*printf("\n%s, %s, %s, %d, %s, %f, %d, %s\n",
 			item->id, 	item->style, item->title, item->year, item->run_time, item->average_rating, item->num_votes, item->genre
 		);
-		printf("\n");
+		printf("\n");*/
 
 		if(i%2 == 0) printf(". ");
 
