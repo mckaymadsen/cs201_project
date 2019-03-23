@@ -35,12 +35,13 @@ void main_menu_display()
     printf("\t2. Read a catalog\n");
     printf("\t3. Update a catalog\n");
     printf("\t4. Remove a catalog\n");
-    printf("\n\tEnter 1 - 4, and then press enter: ");
+    printf("\t5. Exit\n");
+    printf("\n\tEnter 1 - 5, and then press enter: ");
 }
 
 /* 
  * This function gets the user input from the main menu prompt. It returns 0 by default
- * for error checking, -1 if "Exit is entered", or 1-4 correspoding to a menu prompt.
+ * for error checking, -1 if "Exit" or 5 is entered, or 1-4 correspoding to a menu prompt.
  * fgets() is used to read in the input until a new line is reached or BUFSIZE (8216)
  * is hit. sscanf is used to pull the formatted input The function will then check the
  * input and reprompt until a valid input (1-4 or "Exit") is entered.
@@ -60,7 +61,7 @@ int main_menu_input()
                 valid_input = 1;
                 return choice;
         }
-        else if (strcmp(buf,"Exit\n") == 0)
+        else if (strcmp(buf,"Exit\n") == 0 || choice == 5)
         {
             return -1;
         }
