@@ -1,3 +1,13 @@
+/*  Filename:       main.c
+ *  Author:         McKay Madsen
+ *  Date:           3/15/19
+ *  Version:        2.0
+ *  Description:
+ *    TODO
+ *  Notes:
+ * 		Requires: UI.c
+ */
+
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -6,7 +16,6 @@
 
 
 #define num_elements 14	//numer of elements in dataset
-#define max_catalog 50
 #define max_search 15
 //#define num_elements 5658364
 
@@ -32,42 +41,92 @@ struct movie *delete(struct movie *item);
 long hash_function(char title[100]);
 long search_hash(char search_term[50], long search_results[max_search]);
 
+int create_catalog();
+
 void print_hash_location(int location);
 
 int main() 
 {
-
+	int max_catalog = 50;
 	display_start();
 	
-	//Load Dataset
 	printf("\n\tLoading dataset ");
 	load_database();
 	printf("Load Complete\n");	
 
+	int main_menu_choice = 0;
+	int update_catalog_choice = 0;
+	int create_catalog_choice = 0;
+	//int exit_flag = 0;
 
-	char search_term[50];
-	
-	printf("Enter Search:");
-	scanf("%[^\n]*c",search_term);
-	//search_term[strlen(search_term)-1] = '\0';
+	while(main_menu_choice != -1)	//looop until exit xuit
+	{
+		main_menu_display();
+		main_menu_choice = main_menu_input();
+		if (main_menu_choice == -1) break;
+		
+		printf("\nuser choice: %d\n", main_menu_choice); //debug
 
-	long search_results[max_search] = {0};
-	if (search_hash(search_term, search_results) != -1)
-	{    
-		int i;
-		for (i = 0; i<max_search; i++)
-		{
-			if (search_results[i] != 0)
+		//while(exit_flag != 1)
+		//{
+			switch(main_menu_choice)
 			{
-				print_hash_location(search_results[i]);
+				case 4 :	//REMOVE -- TODO
+					//TODO
+					break;
+				case 3 :	//UPDATE -- TODO
+					update_catalog_display();
+					update_catalog_choice = update_catalog_input();
+					break;
+				case 2 :	//LOAD -- TODO
+					read_catalog_display();
+					read_catalog_input();
+					break;
+				case 1 :	//CREATE -- TODO
+					create_catalog_display(max_catalog);
+					create_catalog_choice = create_catalog_input();
+				printf("\n%d",create_catalog_choice);//debug
+					if (create_catalog_choice == 2) break;
+					else if (create_catalog() == 1) printf("\n\tCatalog created sucessfully!\n");//goto main menu somehow
+					
+					break;
+				case 0 :
+					printf("Yikes, nohting happened in main_menu_input");
+					break;
+				default : 
+					printf("somthing went wrong");
+					//exit_flag = 1;
+					break;
+			}
+
+		//}
+		//search debug
+		/*
+		char search_term[50];
+		
+		printf("Enter Search:");
+		scanf("%[^\n]*c",search_term);
+		//search_term[strlen(search_term)-1] = '\0';
+
+		long search_results[max_search] = {0};
+		if (search_hash(search_term, search_results) != -1)
+		{    
+			int i;
+			for (i = 0; i<max_search; i++)
+			{
+				if (search_results[i] != 0)
+				{
+					print_hash_location(search_results[i]);
+				}
 			}
 		}
-	}
-	else
-	{
-		printf("\nNo Matches\n");
-	}
-	
+		else
+		{
+			printf("\nNo Matches\n");
+		}
+		//end search debug
+		*/
+	}	
 	return 0;
 }
 
@@ -163,6 +222,31 @@ long search_hash(char search_term[50],long search_results[max_search])
 	
 	
 
+}
+
+int create_catalog()
+{
+	char name[55] = "";
+	printf("\tEnter the name of the catalog you'd like to create. It can be a max of 50 \n");
+	printf("alphanumeric characters. Do not include the file extension: ");
+
+	char buf[BUFSIZ];
+	fgets(buf, BUFSIZ, stdin);
+    sscanf(buf, "%s", name);
+	//ADD in error checking for size
+
+	strcat(name,".txt");
+    
+	FILE *fptr;
+	fptr = fopen(name, "w"); 
+    if (fptr != NULL)
+    {
+		return 1;
+    }
+	else
+	{
+		return -1;
+	}
 }
 
 void print_hash_location(int location) //debug
