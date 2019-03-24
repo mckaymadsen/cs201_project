@@ -15,16 +15,17 @@
 #include "UI.h"
 
 
-#define num_elements 14	//numer of elements in dataset
+#define num_elements 36	//numer of elements in dataset
 #define max_search 15
-//#define num_elements 5658364
+//#define num_elements 5658364 (all)
+//#define num_elements 511709 (movies)
 
 struct movie 
 {	
 	char id[11];			//imdb given uniqie ID
-	char style[20];			//movie, video, tvShort
-	char title[100];		//Title of movie
-	long location;				//array location/hask key
+	//char style[20];			//movie, video, tvShort
+	char title[150];		//Title of movie
+	long location;				//array location/hash key
 	int year;				//Year movie was released
 	//int run_time;			//length of film (minutes)
 	char run_time[15];
@@ -94,14 +95,14 @@ int main()
 					printf("Yikes, nohting happened in main_menu_input");
 					break;
 				default : 
-					printf("somthing went wrong");
+				printf("somthing went wrong");
 					//exit_flag = 1;
 					break;
 			}
 
 		//}
 		//search debug
-		/*
+		
 		char search_term[50];
 		
 		printf("Enter Search:");
@@ -125,7 +126,7 @@ int main()
 			printf("\nNo Matches\n");
 		}
 		//end search debug
-		*/
+		
 	}	
 	return 0;
 }
@@ -135,7 +136,8 @@ int main()
 void load_database()
 {
 	FILE *fptr;								//create the file opener
-	fptr = fopen("test_data.txt", "r");		//open database 
+	fptr = fopen("test_data2.txt", "r");		//open database 
+	char trash[25];
 
 	int i = 0;
 	while (i < num_elements)				//Read until number of items is complete (bad way, but it works)
@@ -147,8 +149,8 @@ void load_database()
 		}
 
 		fscanf(fptr,
-		 	"%10[^,],	%20[^,],	 %100[^,],	  %d,	  	   %10[^,],		   %lf,					  %d, 				%25s",
-			item->id, 	item->style, item->title, &item->year, item->run_time, &item->average_rating, &item->num_votes, item->genre
+		 	"%10[^\t]\t	%100[^\t]\t %20[^\t]\t	 	  %d\t	  	   %10[^\t]\t		   %lf\t					  %d\t 				%25s",
+			item->id, item->title,	trash, &item->year, item->run_time, &item->average_rating, &item->num_votes, item->genre
 		);
 
 		long hash_index = hash_function(item->title);		//get hash_index
@@ -164,8 +166,8 @@ void load_database()
 		hash_array[hash_index] = item;
 		hash_array[hash_index]->location = hash_index;
 
-		/*printf("\n%s, %s, %s, %d, %s, %f, %d, %s\n",
-			item->id, 	item->style, item->title, item->year, item->run_time, item->average_rating, item->num_votes, item->genre
+		/*printf("\n%s,  %s, %d, %s, %f, %d, %s\n",
+			item->id, 	item->title, item->year, item->run_time, item->average_rating, item->num_votes, item->genre
 		);
 		printf("\n");*/
 
@@ -251,8 +253,8 @@ int create_catalog()
 
 void print_hash_location(int location) //debug
 {
-	printf("\n%s, %s, %s, %d, %s, %.2f, %d, %s, %ld\n",
-		hash_array[location]->id, hash_array[location]->style, hash_array[location]->title, 
+	printf("\n%s, %s, %d, %s, %.2f, %d, %s, %ld\n",
+		hash_array[location]->id, hash_array[location]->title, 
 		hash_array[location]->year,	hash_array[location]->run_time, hash_array[location]->average_rating, 
 		hash_array[location]->num_votes, hash_array[location]->genre, hash_array[location]->location
 	);
