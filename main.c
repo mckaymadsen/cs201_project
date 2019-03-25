@@ -6,6 +6,9 @@
  *    TODO
  *  Notes:
  * 		Requires: UI.c
+ *  TODO:
+ * 		remove catalog, removle movies from catalog, clean up
+ * optimize
  */
 
 #include <stdlib.h>
@@ -84,10 +87,8 @@ int main()
 		main_menu_choice = main_menu_input();
 		if (main_menu_choice == -1) break;
 		
-		printf("\nuser choice: %d\n", main_menu_choice); //debug
+		//printf("\nuser choice: %d\n", main_menu_choice); //debug
 
-		//while(exit_flag != 1)
-		//{
 			switch(main_menu_choice)
 			{
 				case 4 :	//REMOVE -- TODO
@@ -128,12 +129,13 @@ int main()
 
 					if (read_catalog_choice == 5) break;
 					else if(read_catalog_choice == 1) open_catalog(0);
-					else if(read_catalog_choice == 2) open_catalog(1);
-					else if(read_catalog_choice == 3) save_catalog(size_current_catalog());
-					else if(read_catalog_choice == 4) display_catalog();
+					else if(read_catalog_choice == 2) display_catalog();
+					else if(read_catalog_choice == 3) open_catalog(1);
+					else if(read_catalog_choice == 4) save_catalog(size_current_catalog());					
 
 					read_catalog_choice = 0;		//reset choice
 					break;
+
 				case 1 :	//CREATE -- TODO
 					create_catalog_display(max_catalog);
 					create_catalog_choice = create_catalog_input();
@@ -143,6 +145,7 @@ int main()
 					
 					create_catalog_choice = 0;	//reset choice
 					break;
+
 				case 0 :
 					printf("Yikes, nohting happened in main_menu_input");
 					break;
@@ -150,13 +153,11 @@ int main()
 					printf("somthing went wrong");
 					break;
 			}
-
-		//}
 	}	
 	return 0;
 }
 
-
+/*************FUNCTIONS****************/
 
 void load_database()
 {

@@ -138,9 +138,9 @@ void read_catalog_display(int max_catalog)
     printf("\n\tRead/Load a catalog menu!\n\tThe max size of a catalog is currently set to %d\n", max_catalog);
     printf("\n\tListed below are the available options. The selected catalog can only be read from this screen\n");
     printf("\tTo edit the catalog, go to the main menu and chose \"Update Catalog\"\n");
-    printf("\n\t1. Display an existing catalog\n");
-    printf("\n\t2. Display the current catalog\n");
-    printf("\n\t3. Load an existing catalog\n");
+    printf("\n\t1. Display an existing catalog");
+    printf("\n\t2. Display the current catalog");
+    printf("\n\t3. Load an existing catalog");
     printf("\n\t4. Save the current catalog\n");
     printf("\t5. Go back \n");
     printf("\n\tEnter 1-5, then press enter: ");
