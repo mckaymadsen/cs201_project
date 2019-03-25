@@ -17,25 +17,27 @@
 
 #define num_elements 36	//numer of elements in dataset
 #define max_search 15
+#define max_catalog_def 50 //catalog
 //#define num_elements 5658364 (all)
 //#define num_elements 511709 (movies)
 
 struct movie 
 {	
-	char id[11];			//imdb given uniqie ID
+	char id[11];					//imdb given uniqie ID
 	//char style[20];			//movie, video, tvShort
-	char title[150];		//Title of movie
+	char title[150];			//Title of movie
 	long location;				//array location/hash key
-	int year;				//Year movie was released
-	//int run_time;			//length of film (minutes)
+	int year;							//Year movie was released
+	//int run_time;				//length of film (minutes)
 	char run_time[15];
-	char genre[100];		//top genres
-	double average_rating;	//average rating
-	int num_votes;			//number of votes for rating
+	char genre[100];			//top genres
+	double average_rating;//average rating
+	int num_votes;				//number of votes for rating
 };
 
 struct movie *dummy_item;
 struct movie *hash_array[num_elements];
+struct movie *current_catalog[max_catalog_def];
 
 void load_database();
 struct movie *delete(struct movie *item);
@@ -43,13 +45,15 @@ long hash_function(char title[100]);
 long search_hash(char search_term[50], long search_results[max_search]);
 
 int create_catalog();
-int load_catalog();
+int open_catalog();
+void load_catalog(char filename[55]);
+void display_catalog();
 
 void print_hash_location(int location);
 
 int main() 
 {
-	int max_catalog = 50;
+	int max_catalog = max_catalog_def;
 	display_start();
 	
 	printf("\n\tLoading dataset ");
@@ -87,7 +91,7 @@ int main()
 					read_catalog_display(max_catalog);
 					read_catalog_choice = read_catalog_input();
 					if (read_catalog_choice == 2) break;
-					else if(read_catalog_choice == 1) load_catalog();
+					else if(read_catalog_choice == 1) open_catalog();
 
 					read_catalog_choice = 0;		//reset choice
 					break;
@@ -271,14 +275,98 @@ int create_catalog()
  * i.e. string == NULL, it prompts the user for the filename.
  * 
  * TODO:	add in load from file
- * 				add in prompt use for name
  * 				add in display catalog 
  */
-int load_catalog()
+int open_catalog()
 {
 	//get catalog name and display catalog
-	printf("\nWORKING\n");
+	//printf("\nWORKING\n");
+	char name[55] = "";
+	int not_valid_file = 0;
+	while(not_valid_file == 0)
+	{
+		printf("\n\tEnter the name of the catalog you'd like to read. \n");
+		printf("\n\tType \"Return\" to stop. \n");
+		printf("\tInclude the file extension: ");
+
+
+		char buf[BUFSIZ];
+		fgets(buf, BUFSIZ, stdin);
+		sscanf(buf, "%s", name);
+
+		if (strcmp(name,"Return")==0)
+		{
+			//not_valid_file = 1;
+			return -1;
+		}	
+
+		FILE *fptr;
+		fptr = fopen(name, "r"); 
+		if (fptr == NULL)
+		{
+			printf("\nFileread Error. Please try again.");
+		}
+		else
+		{
+			printf("\nopened sucessfully\n");
+			not_valid_file = 1;
+			fclose(fptr);
+			load_catalog(name);
+			display_catalog();			
+			return 1;
+		}	
+
+	}
 	return 0;
+}
+
+void load_catalog(char filename[55])
+{
+	FILE *fptr;
+	fptr = fopen(filename, "r"); 
+	if (fptr == NULL)
+	{
+			printf("\nFileread Error. Please try again.");
+	}
+
+	char trash[25];
+	int num_movies = 0;
+	fscanf(fptr," %d", &num_movies);
+
+	for (int i = 0; i < num_movies; i++)
+	{
+		struct movie *item = (struct movie*) malloc(sizeof(struct movie));	//create new item with malloc
+		if (item == NULL)
+		{
+			printf("error allocating memory for movie %d\n", i);
+		}
+
+		fscanf(fptr,
+		 	"%10[^\t]\t	%100[^\t]\t %20[^\t]\t	 	  %d\t	  	   %10[^\t]\t		   %lf\t					  %d\t 				%25s",
+			item->id, item->title,	trash, &item->year, item->run_time, &item->average_rating, &item->num_votes, item->genre
+		);
+
+		current_catalog[i] = item;
+	}
+
+
+}
+void display_catalog()
+{
+	for (int i = 0; i < max_catalog_def; i++)
+	{
+		if (current_catalog[i] == NULL && i == 0) printf("\n\tCatalog Empty, add movies through the main screen\n");
+		else if (current_catalog[i] != NULL)
+		{	
+			printf("\n\t%d.", i);	
+			printf(" %s, %d, %s, %.2f, %d, %s, %ld",
+				current_catalog[i]->title, 
+				current_catalog[i]->year,	current_catalog[i]->run_time, current_catalog[i]->average_rating, 
+				current_catalog[i]->num_votes, current_catalog[i]->genre, current_catalog[i]->location
+			);
+		}
+	}
+	printf("\n");
 }
 
 /*
