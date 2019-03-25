@@ -43,6 +43,7 @@ long hash_function(char title[100]);
 long search_hash(char search_term[50], long search_results[max_search]);
 
 int create_catalog();
+int load_catalog();
 
 void print_hash_location(int location);
 
@@ -58,6 +59,7 @@ int main()
 	int main_menu_choice = 0;
 	int update_catalog_choice = 0;
 	int create_catalog_choice = 0;
+	int read_catalog_choice = 0;
 	//int exit_flag = 0;
 
 	while(main_menu_choice != -1)	//looop until exit xuit
@@ -78,10 +80,16 @@ int main()
 				case 3 :	//UPDATE -- TODO
 					update_catalog_display();
 					update_catalog_choice = update_catalog_input();
+					
+					update_catalog_choice = 0;		//reset choice
 					break;
 				case 2 :	//LOAD -- TODO
-					read_catalog_display();
-					read_catalog_input();
+					read_catalog_display(max_catalog);
+					read_catalog_choice = read_catalog_input();
+					if (read_catalog_choice == 2) break;
+					else if(read_catalog_choice == 1) load_catalog();
+
+					read_catalog_choice = 0;		//reset choice
 					break;
 				case 1 :	//CREATE -- TODO
 					create_catalog_display(max_catalog);
@@ -90,6 +98,7 @@ int main()
 					if (create_catalog_choice == 2) break;
 					else if (create_catalog() == 1) printf("\n\tCatalog created sucessfully!\n");//goto main menu somehow
 					
+					create_catalog_choice = 0;	//reset choice
 					break;
 				case 0 :
 					printf("Yikes, nohting happened in main_menu_input");
@@ -102,7 +111,7 @@ int main()
 
 		//}
 		//search debug
-		
+		/*
 		char search_term[50];
 		
 		printf("Enter Search:");
@@ -126,7 +135,7 @@ int main()
 			printf("\nNo Matches\n");
 		}
 		//end search debug
-		
+		*/
 	}	
 	return 0;
 }
@@ -221,16 +230,22 @@ long search_hash(char search_term[50],long search_results[max_search])
 	if (searched == 0)	return -1;
 
 	return 0;
-	
-	
-
 }
+
+/*
+ * This function returns a 1 when a catalog is created sucessfully and a -1 if it failed.
+ * The user is prompted to enter a string, which becomes the file name. ".txt" is added
+ * to the end to make it a text file.
+ * 
+ * TODO: 	add in error checking for filesize name
+ * 				add in error handinling for failed file
+ */
 
 int create_catalog()
 {
 	char name[55] = "";
 	printf("\tEnter the name of the catalog you'd like to create. It can be a max of 50 \n");
-	printf("alphanumeric characters. Do not include the file extension: ");
+	printf("\talphanumeric characters. Do not include the file extension: ");
 
 	char buf[BUFSIZ];
 	fgets(buf, BUFSIZ, stdin);
@@ -241,17 +256,35 @@ int create_catalog()
     
 	FILE *fptr;
 	fptr = fopen(name, "w"); 
-    if (fptr != NULL)
-    {
+  if (fptr != NULL)
+  {
 		return 1;
-    }
+  }
 	else
 	{
 		return -1;
 	}
 }
 
-void print_hash_location(int location) //debug
+/*
+ * This function loads a catalog when given a filename (string). If not string is given
+ * i.e. string == NULL, it prompts the user for the filename.
+ * 
+ * TODO:	add in load from file
+ * 				add in prompt use for name
+ * 				add in display catalog 
+ */
+int load_catalog()
+{
+	//get catalog name and display catalog
+	printf("\nWORKING\n");
+	return 0;
+}
+
+/*
+ * This function prints out the data at a given hash location in the table.
+ */
+void print_hash_location(int location) 
 {
 	printf("\n%s, %s, %d, %s, %.2f, %d, %s, %ld\n",
 		hash_array[location]->id, hash_array[location]->title, 

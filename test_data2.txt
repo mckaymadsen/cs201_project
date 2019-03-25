@@ -8,7 +8,7 @@ tt0076761	Steppe	movie	1978	134	7.30	98	Drama
 tt0076762	The Stick Up	movie	1977	101	5.90	15	Comedy
 tt0076765	Shadows of a Hot Summer	movie	1978	100	7.30	219	Drama
 tt0076767	Storm Boy	movie	1976	88	7.20	864	Drama
-tt0076770	The Strange Case of the End of Civilization as We Know It	movie	1977	56	6.50	586	Comedy
+tt0076770	"The Strange Case of the End of Civilization as We Know It"	movie	1977	56	6.50	586	Comedy
 tt0076773	A Strange Woman	movie	1978	147	7.00	69	Drama
 tt0076774	The Last Daddy	movie	1978	\N	0.00	0	Drama
 tt0076776	Stunts	movie	1977	89	5.40	326	Drama

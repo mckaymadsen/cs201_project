@@ -10,7 +10,7 @@ int main_menu_input();
 void create_catalog_display(int max_catalog);
 int create_catalog_input();
 
-void read_catalog_display();
+void read_catalog_display(int max_catalog);
 int read_catalog_input();
 
 void update_catalog_display();

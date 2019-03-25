@@ -80,16 +80,24 @@ int main_menu_input()
     return 0;
 }
 
+/* 
+ * Displays the create catalog menu text to the terminal
+ */
 void create_catalog_display(int max_catalog)
 {
     printf("\n\tCreate a catalog menu!\n\tThe max size of a catalog is currently set to %d\n", max_catalog);
-    printf("\n\tListed below are the available options. A created catalogs will be blank.\n");
+    printf("\n\tListed below are the available options. A created catalog will be blank.\n");
     printf("\tOnce a catalog is created, movies can be added using the update catalog option\n");
     printf("\tin the main menu.\n");
-    printf("\n\t1. Create a blank catalog\n");
+    printf("\n\t1. Create a catalog\n");
     printf("\t2. Go back \n");
     printf("\n\tEnter 1-2, then press enter: ");
 }
+
+/*
+ * Reads in user input to determine choice for the create catalog menu.
+ * A 1 creates a catalog and a 2 goes back to the previous menu.
+ */
 
 int create_catalog_input()
 {
@@ -125,14 +133,48 @@ int create_catalog_input()
     return 0;
 }
 
-void read_catalog_display()
+void read_catalog_display(int max_catalog)
 {
-
+    printf("\n\tRead a catalog menu!\n\tThe max size of a catalog is currently set to %d\n", max_catalog);
+    printf("\n\tListed below are the available options. The selected catalog can only be read from this screen\n");
+    printf("\tTo edit the catalog, go to the main menu and chose \"Update Catalog\"\n");
+    printf("\n\t1. Read an existing catalog\n");
+    printf("\t2. Go back \n");
+    printf("\n\tEnter 1-2, then press enter: ");
 }
 
 int read_catalog_input()
 {
-    return -1;
+    int valid_input = 0;
+	int choice = 0;
+
+    char buf[BUFSIZ];
+
+    fgets(buf, BUFSIZ, stdin);
+    while (!valid_input) 
+    {
+        if ((sscanf(buf, "%d", &choice) == 1) && (choice > 0 && choice < 3 ))
+        {
+                valid_input = 1;
+                return choice;
+        }
+        else if (strcmp(buf,"Exit\n") == 0)
+        {
+            return -1;
+        }
+        else
+        {     
+            printf("\n\n\tInvlaid Input, please try again. Type \"Exit\" to quit: ");
+            fgets(buf, BUFSIZ, stdin);
+            if ((sscanf(buf, "%d", &choice) == 1) && (choice > 0 && choice < 3 ))
+            {
+                valid_input = 1;
+                return choice;
+            } 
+        }        
+    }
+
+    return 0;
 }
 
 void update_catalog_display()
