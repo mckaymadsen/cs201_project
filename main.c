@@ -7,7 +7,7 @@
  *  Notes:
  * 		Requires: UI.c
  *  TODO:
- * 		remove catalog, removle movies from catalog, clean up
+ * 		removle movies from catalog, clean up, fix search
  * optimize
  */
 
@@ -17,10 +17,10 @@
 
 #include "UI.h"
 
-//#define num_elements 36	//numer of elements in dataset
+#define num_elements 36	//numer of elements in dataset
 #define max_search 15
 #define max_catalog_def 50 //catalog
-#define num_elements 511709 //(movies)
+//#define num_elements 511709 //(movies)
 
 struct movie 
 {	
@@ -41,24 +41,25 @@ struct movie *current_catalog[max_catalog_def];
 
 struct movie *delete(struct movie *item);
 
-void load_database();
+void load_database(void);
 unsigned long hash_function(char *title);
 
 long search_hash(char search_term[50], long search_results[max_search]);
 
 //manage catalog functions
 void load_catalog(char filename[55]);
-void display_catalog();
-void save_catalog();
-int create_catalog();
-int open_catalog();
+void display_catalog(void);
+void save_catalog(int number_of_entries);
+int create_catalog(void);
+int remove_catalog(void);
+int open_catalog(int load_flag);
 
 //update catalog functions
-void add_movie();
+void add_movie(void);
 void delete_movie();
 
 //driver functions
-int size_current_catalog();
+int size_current_catalog(void);
 void print_hash_location(int location);
 
 int main() 
@@ -75,6 +76,7 @@ int main()
 	int create_catalog_choice = 0;
 	int read_catalog_choice = 0;
 
+	int remove_catalog_result = 0;
 	//int ucc_exit = 0;
 	//int exit_flag = 0;
 
@@ -91,15 +93,18 @@ int main()
 
 			switch(main_menu_choice)
 			{
-				case 4 :	//REMOVE -- TODO
-					//TODO
+				case 4 :	//REMOVE
+					remove_catalog_result = remove_catalog();
+					if (remove_catalog_result == 0) printf("\n\tCatalog removed\n");
+					else printf("\tRemoval fail. Make sure you enetered an existing filename.\n");
 					break;
 				case 3 :	//UPDATE -- TODO
 					while(!ucc_exit)
 					{	
 						update_catalog_display(max_catalog);
 						update_catalog_choice = update_catalog_input();
-						
+						if (update_catalog_choice == -1) break;
+
 						switch(update_catalog_choice)
 						{
 							case 1:	//Display current
@@ -157,12 +162,20 @@ int main()
 	return 0;
 }
 
-/*************FUNCTIONS****************/
 
-void load_database()
+/*******************FUNCTIONS**********************/
+
+/*
+ * This function loads the database. It reads in a line from the defeined datafile
+ * and parses it into a temorary item using strtok. The title is the hashed to get
+ * the hash location. The DJBZ hash algrothim is used. Linear probing is used to resolve 
+ * collisions. The hash table is hard coded to have enough slots to fit all results. 
+ */
+void load_database(void)
 {
 	FILE *fptr;								//create the file opener
-	fptr = fopen("cs201database_TAB.txt", "r");		//open database 
+	//fptr = fopen("cs201database_TAB.txt", "r");		//open database 
+	fptr = fopen("test_data2.txt", "r");
 	//char trash[25];
 	char buff[BUFSIZ];
 
@@ -175,10 +188,6 @@ void load_database()
 			printf("error allocating memory for movie %d\n", i);
 		}
 
-		/*fscanf(fptr,
-		 	"%10[^\t]\t	%200[^\t]\t %50[^\t]\t	 	  %d\t	  	   %10[^\t]\t		   %lf\t					  %d\t 				%25s",
-			item->id, item->title,	trash, &item->year, item->run_time, &item->average_rating, &item->num_votes, item->genre
-		);*/
 		fgets(buff, BUFSIZ, fptr);
 		char *token = strtok(buff,"\t");
 		strcpy(item->id, token);
@@ -220,9 +229,13 @@ void load_database()
 		i++;
 	}
 
+	fclose(fptr);
 	return;
 }
 
+/*
+ * The function frees the struct
+ */
 struct movie *delete(struct movie *item)
 {
 	//long hash_index = item->key;
@@ -230,6 +243,11 @@ struct movie *delete(struct movie *item)
 	return NULL;
 }
 
+/*
+ * This function returns the hash value when given a string
+ * It is a copy of the DJB2 hash function see here:
+ * http://www.cse.yorku.ca/~oz/hash.html
+ */ 
 unsigned long hash_function(char *title)
 {
 	/*long key = 0;
@@ -245,6 +263,13 @@ unsigned long hash_function(char *title)
 
 }
 
+/*
+ * This function searches for string matches in the hash table.
+ * The string to be searched for is put into the hash function
+ * and the returned index is used as a starting point. This is not
+ * a very effiecent searach for partial strings, but will give 
+ * close to O(1) results when the exact title is used. 
+ */
 long search_hash(char search_term[50],long search_results[max_search])
 {
 	int start_index = hash_function(search_term) % num_elements;
@@ -254,8 +279,8 @@ long search_hash(char search_term[50],long search_results[max_search])
 
 	while (hash_array[index] != NULL && found < max_search && searched < num_elements)
 	{
-		char *pch = strstr(hash_array[index]->title,search_term);
-		if ( pch != NULL) //if martching substirng is found
+		char *pch = strstr(hash_array[index]->title, search_term);
+		if ( pch != NULL) //if matching substirng is found
 		{			
 			search_results[found] = hash_array[index]->location;
 			found++;
@@ -281,12 +306,12 @@ long search_hash(char search_term[50],long search_results[max_search])
 int create_catalog()
 {
 	char name[55] = "";
-	printf("\tEnter the name of the catalog you'd like to create. It can be a max of 50 \n");
-	printf("\talphanumeric characters. Do not include the file extension: ");
+	printf("\tEnter the name of the catalog you'd like to create. Try to stay below 50 \n");
+	printf("\talphanumeric characters for ease of use. Name: ");
 
 	char buf[BUFSIZ];
 	fgets(buf, BUFSIZ, stdin);
-    sscanf(buf, "%s", name);
+  sscanf(buf, "%s", name);
 	//ADD in error checking for size
 
 	strcat(name,".txt");
@@ -307,14 +332,10 @@ int create_catalog()
 /*
  * This function loads a catalog when given a filename (string). If not string is given
  * i.e. string == NULL, it prompts the user for the filename.
- * 
- * TODO:	add in load from file
- * 				add in display catalog 
  */
 int open_catalog(int load_flag)
 {
 	//get catalog name and display catalog
-	//printf("\nWORKING\n");
 	char name[55];// = "";
 	int not_valid_file = 0;
 	while(not_valid_file == 0)
@@ -327,38 +348,46 @@ int open_catalog(int load_flag)
 		fgets(buf, BUFSIZ, stdin);
 		sscanf(buf, "%s", name);
 
-		if (strcmp(name,"Return")==0)
+		if (strcmp(name,"Return")== 0) 
 		{
 			return 0;
 		}	
-
-		FILE *fptr;
-		fptr = fopen(name, "r"); 
-		if (fptr == NULL)
-		{
-			printf("\nFileread Error. Please try again.");
-		}
 		else
 		{
-			printf("\nopened sucessfully\n");
 			not_valid_file = 1;
-			fclose(fptr);
-			load_catalog(name);
-			if (!load_flag)	display_catalog();			
-			return 1;
-		}	
-
+		}		
 	}
+
+	FILE *fptr;
+	fptr = fopen(name, "r"); 
+	if (fptr == NULL)
+	{
+		printf("\n\tFileread Error. Please try again with the correct title.");
+	}
+	else
+	{
+		printf("\n\tOpened sucessfully!\n");
+		not_valid_file = 1;
+		fclose(fptr);
+		load_catalog(name);
+		if (!load_flag)	display_catalog();			
+		return 1;
+	}	
 	return 0;
 }
 
+/*
+ * This function loads a text file containing movie data into the current catalog.
+ * 
+ * TODO: add in new way to read file
+ */
 void load_catalog(char filename[55])
 {
 	FILE *fptr;
 	fptr = fopen(filename, "r"); 
 	if (fptr == NULL)
 	{
-			printf("\nFileread Error. Please try again.");
+			printf("\nFileread Error. Please try again with the correct title.");
 	}
 
 	char trash[25];
@@ -384,24 +413,37 @@ void load_catalog(char filename[55])
 	printf("\n\tCatalog Loaded Sucessfully\n");
 }
 
+/*
+ * This fucntion displays the values in the current catalog.
+ */
 void display_catalog()
 {
 	for (int i = 0; i < max_catalog_def; i++)
 	{
-		if (current_catalog[i] == NULL && i == 0) printf("\n\tCatalog Empty, add movies through the main screen\n");
+		//if (current_catalog[i] == NULL && i == 0) printf("\n\tCatalog Empty, add movies through the main screen\n");
+		if (size_current_catalog() == 0)
+		{
+			printf("\n\tCatalog Empty, add movies through the main screen\n");
+			return;
+		}
 		else if (current_catalog[i] != NULL)
 		{	
 			printf("\n\t%d.", i);	
-			printf(" %s, %d, %s, %.2f, %d, %s, %ld",
+			printf(" %s, %d, %s, %.2f, %d, %s",
 				current_catalog[i]->title, 
 				current_catalog[i]->year,	current_catalog[i]->run_time, current_catalog[i]->average_rating, 
-				current_catalog[i]->num_votes, current_catalog[i]->genre, current_catalog[i]->location
+				current_catalog[i]->num_votes, current_catalog[i]->genre
 			);
 		}
 	}
 	printf("\n");
 }
 
+/*
+ * This function adds movies to the current catalog. To add a movie, the user is prompted
+ * to enter a search term to look for a movie. THe can then chose a title from the (limited)
+ * results to add to the current directory.
+ */
 void add_movie()
 {
 	char search_term[155];
@@ -414,7 +456,6 @@ void add_movie()
   fgets(buf, BUFSIZ, stdin);
   sscanf(buf, "%s", search_term);
 
-	//scanf("%[^\n]*c",search_term);
 	printf("\n");
 	if(search_term == NULL || strlen(search_term) < 3 || strlen(search_term) > 150) 
 	{
@@ -464,11 +505,18 @@ void add_movie()
 	found = 0;
 	return;
 }
+
+/* 
+ * TODO
+ */
 void delete_movie()
 {
 
 }
 
+/*
+ * This function writes the current catalog to a given filename.
+ */
 void save_catalog(int number_of_entries)
 {
 	char filename[55];
@@ -501,6 +549,20 @@ void save_catalog(int number_of_entries)
 	}
 	fclose(fptr);
 	return;
+}
+
+int remove_catalog()
+{
+	char buf[BUFSIZ];
+	char filename[155];
+	printf("\n\tWelcome to remove a catalog menu. Enter the filename of the catalog\n");
+	printf("\tyou'd like to remove: ");
+
+  fgets(buf, BUFSIZ, stdin);
+  sscanf(buf, "%s", filename);
+
+	int status = remove(filename);
+	return status;
 }
 
 int size_current_catalog()
