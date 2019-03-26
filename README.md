@@ -28,8 +28,9 @@ This datset combines the "basic" and "ratings" datasets found on IMDB's website.
  
  **Data Structure**
  The main data structure used was a hash table with linear probing and the DJB2 hashig function. This was done to provide a ~O(1) 
- search time when the search term is the Exact title. Linear probing was chosen due to the ese of use and low nmber of collisions
- with the DJB2 function (XX collisions on main dataset).
+ search time when the search term is the Exact title. Quadatric probing was chosen due to the ease of use and to help avoid collisons
+ as tehre are several movies with the same title (i.e there are over 5 movies called "Star").
+
  Each movie has its data stored in a struct.
 
  For the user catalog, a simple array was chosen due to the small size of the catalogs (<50), although this can be easily increased

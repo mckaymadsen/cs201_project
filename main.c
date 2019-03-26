@@ -178,8 +178,9 @@ void load_database(void)
 	//fptr = fopen("test_data2.txt", "r");
 	//char trash[25];
 	char buff[BUFSIZ];
-int coll = 0;
+	int q = 1;
 	int i = 0;
+
 	while (i < num_elements)				//Read until number of items is complete (bad way, but it works)
 	{
 		struct movie *item = (struct movie*) malloc(sizeof(struct movie));	//create new item with malloc
@@ -212,10 +213,10 @@ int coll = 0;
 		while(hash_array[hash_index] != NULL && hash_array[hash_index]->location != -1)
 		{
 			//go to next cell
-			++hash_index;				
+			//++hash_index;	
+			//hash_index = hash_index %= num_elements;			
 			//wrap around the table
-			coll++;
-			hash_index %= num_elements;
+			hash_index = (hash_index + (q * q))% num_elements;
 		}
 		hash_array[hash_index] = item;
 		hash_array[hash_index]->location = hash_index;
@@ -229,7 +230,7 @@ int coll = 0;
 		if(i%75000 == 0) printf(". ");
 		i++;
 	}
-printf("%d",coll);
+
 	fclose(fptr);
 	return;
 }
