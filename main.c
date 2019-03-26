@@ -446,15 +446,18 @@ void display_catalog()
  */
 void add_movie()
 {
-	char search_term[155];
+	//char search_term[155];
 	int found = 0;
 	
 	search_hash_display(max_search);
 	
-	char buf[BUFSIZ];
+	//char buf[BUFSIZ];
+	char search_term[BUFSIZ];
+  //fgets(buf, BUFSIZ, stdin);
+  //sscanf(buf, "%s", search_term);
 
-  fgets(buf, BUFSIZ, stdin);
-  sscanf(buf, "%s", search_term);
+	fgets(search_term, BUFSIZ, stdin);
+	search_term[strlen(search_term)-1] = '\0'; //remove newline char for search comparison
 
 	printf("\n");
 	if(search_term == NULL || strlen(search_term) < 3 || strlen(search_term) > 150) 
@@ -465,13 +468,14 @@ void add_movie()
 
 	long search_results[max_search] = {0};
 	if (search_hash(search_term, search_results) != -1)
-	{    
+	{   
+		printf("\tMovie result format:\n\tMovie title, Year, Runtime, Average Rating, Number of Votes, Genre\n\n"); 
 		int i;
 		for (i = 0; i<max_search; i++)
-		{
+		{			
 			if (search_results[i] != 0)
 			{
-				printf("\t%d.",i+1);
+				printf("\t%d. ",i+1);
 				print_hash_location(search_results[i]);
 				found++;
 			}
@@ -483,7 +487,12 @@ void add_movie()
 		return;
 	}
 
-	printf("\n\t%d Results Found!\n",found);
+	printf("\t%d Results Found!\n",found);
+	if (found == 0)
+	{
+		printf("\tPlease try to add a movie again.\n");
+		return;
+	}
 	int selected_movie = select_movie_input(found);
 	if (selected_movie == -1) return;
 

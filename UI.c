@@ -253,7 +253,7 @@ int select_movie_input(int found)
 
     char buf[BUFSIZ];
 
-    printf("\n\tEnter the number of the movies listed above (1 to %d): ", found);
+    printf("\n\tEnter the number of the movies listed above (1 to %d) or \"Cancel\" to not add a movie: ", found);
     fgets(buf, BUFSIZ, stdin);
     while (!valid_input) 
     {
@@ -262,14 +262,14 @@ int select_movie_input(int found)
                 valid_input = 1;
                 return choice;
         }
-        else if (strcmp(buf,"Exit\n") == 0)
+        else if (strcmp(buf,"Cancel\n") == 0)
         {
             return -1;
         }
         else
         {     
             printf("\n\n\tInvalid choice\n");
-            printf("\tPlease enter a number from (1 to %d) or \"Exit\" to quit: ", found);
+            printf("\tPlease enter a number from (1 to %d) or \"Cancel\" to quit: ", found);
             fgets(buf, BUFSIZ, stdin);
             if ((sscanf(buf, "%d", &choice) == 1) && (choice > 0 && choice < found+1 ))
             {
