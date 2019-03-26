@@ -17,10 +17,10 @@
 
 #include "UI.h"
 
-#define num_elements 36	//numer of elements in dataset
+//#define num_elements 36	//numer of elements in dataset
 #define max_search 15
 #define max_catalog_def 50 //catalog
-//#define num_elements 511709 //(movies)
+#define num_elements 511709 //(movies)
 
 struct movie 
 {	
@@ -174,11 +174,11 @@ int main()
 void load_database(void)
 {
 	FILE *fptr;								//create the file opener
-	//fptr = fopen("cs201database_TAB.txt", "r");		//open database 
-	fptr = fopen("test_data2.txt", "r");
+	fptr = fopen("cs201database_TAB.txt", "r");		//open database 
+	//fptr = fopen("test_data2.txt", "r");
 	//char trash[25];
 	char buff[BUFSIZ];
-
+int coll = 0;
 	int i = 0;
 	while (i < num_elements)				//Read until number of items is complete (bad way, but it works)
 	{
@@ -214,6 +214,7 @@ void load_database(void)
 			//go to next cell
 			++hash_index;				
 			//wrap around the table
+			coll++;
 			hash_index %= num_elements;
 		}
 		hash_array[hash_index] = item;
@@ -228,7 +229,7 @@ void load_database(void)
 		if(i%75000 == 0) printf(". ");
 		i++;
 	}
-
+printf("%d",coll);
 	fclose(fptr);
 	return;
 }
