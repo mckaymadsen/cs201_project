@@ -233,7 +233,7 @@ void search_hash_display(int max_search)
     printf("\tThis string is case-sesnstive and may take some time to complete.\n");
     printf("\tThe max number of returned results is set to %d\n", max_search);
     printf("\tTo get more results, refine your search\n");
-    printf("\n\tEnter search term (max of 150 characters): ");
+    printf("\n\tEnter search term (min of 3 characters, max of 150 characters): ");
 }
 
 void search_hash_input()
@@ -269,6 +269,7 @@ int select_movie_input(int found)
         else
         {     
             printf("\n\n\tInvalid choice\n");
+            printf("\tPlease enter a number from (1 to %d) or \"Exit\" to quit: ", found);
             fgets(buf, BUFSIZ, stdin);
             if ((sscanf(buf, "%d", &choice) == 1) && (choice > 0 && choice < found+1 ))
             {

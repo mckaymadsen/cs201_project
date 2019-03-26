@@ -17,16 +17,16 @@
 
 #include "UI.h"
 
-#define num_elements 36	//numer of elements in dataset
+//#define num_elements 36	//numer of elements in dataset
 #define max_search 15
 #define max_catalog_def 50 //catalog
-//#define num_elements 511709 (movies)
+#define num_elements 511709 //(movies)
 
 struct movie 
 {	
 	char id[11];					//imdb given uniqie ID
 	char title[150];			//Title of movie
-	long location;				//array location/hash key
+	unsigned long location;				//array location/hash key
 	int year;							//Year movie was released
 	char run_time[15];
 	char genre[100];			//top genres
@@ -42,7 +42,7 @@ struct movie *current_catalog[max_catalog_def];
 struct movie *delete(struct movie *item);
 
 void load_database();
-long hash_function(char title[100]);
+unsigned long hash_function(char *title);
 
 long search_hash(char search_term[50], long search_results[max_search]);
 
@@ -162,8 +162,9 @@ int main()
 void load_database()
 {
 	FILE *fptr;								//create the file opener
-	fptr = fopen("test_data2.txt", "r");		//open database 
-	char trash[25];
+	fptr = fopen("cs201database_TAB.txt", "r");		//open database 
+	//char trash[25];
+	char buff[BUFSIZ];
 
 	int i = 0;
 	while (i < num_elements)				//Read until number of items is complete (bad way, but it works)
@@ -174,12 +175,29 @@ void load_database()
 			printf("error allocating memory for movie %d\n", i);
 		}
 
-		fscanf(fptr,
-		 	"%10[^\t]\t	%100[^\t]\t %20[^\t]\t	 	  %d\t	  	   %10[^\t]\t		   %lf\t					  %d\t 				%25s",
+		/*fscanf(fptr,
+		 	"%10[^\t]\t	%200[^\t]\t %50[^\t]\t	 	  %d\t	  	   %10[^\t]\t		   %lf\t					  %d\t 				%25s",
 			item->id, item->title,	trash, &item->year, item->run_time, &item->average_rating, &item->num_votes, item->genre
-		);
+		);*/
+		fgets(buff, BUFSIZ, fptr);
+		char *token = strtok(buff,"\t");
+		strcpy(item->id, token);
+		token = strtok(NULL,"\t");
+		strcpy(item->title, token);
+		token = strtok(NULL,"\t");	//trash
+		token = strtok(NULL,"\t");
+		item->year = atoi(token);
+		token = strtok(NULL,"\t");
+		strcpy(item->run_time,token);
+		token = strtok(NULL,"\t");
+		item->average_rating = atof(token);
+		token = strtok(NULL,"\t");
+		item->num_votes =  atoi(token);
+		token = strtok(NULL,"\t");
+		strcpy(item->genre, token);
 
-		long hash_index = hash_function(item->title);		//get hash_index
+
+		long hash_index = hash_function(item->title) % num_elements;		//get hash_index
 		
 		//add item to hash table
 		while(hash_array[hash_index] != NULL && hash_array[hash_index]->location != -1)
@@ -197,7 +215,8 @@ void load_database()
 		);
 		printf("\n");*/
 
-		if(i%2 == 0) printf(". ");
+		//if(i%2 == 0) printf(". ");
+		if(i%75000 == 0) printf(". ");
 		i++;
 	}
 
@@ -211,27 +230,33 @@ struct movie *delete(struct movie *item)
 	return NULL;
 }
 
-long hash_function(char title[100])
+unsigned long hash_function(char *title)
 {
-	long key = 0;
+	/*long key = 0;
 	//hashign fucntion here
 	key = title[100] % num_elements;
-	return key;
+	return key;*/
+	
+  unsigned long hash = 5381;
+  int c;
+  while ((c = *title++) != 0)
+    hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
+  return hash;
+
 }
 
 long search_hash(char search_term[50],long search_results[max_search])
 {
-	int start_index = hash_function(search_term);
+	int start_index = hash_function(search_term) % num_elements;
 	int index = start_index;
 	int searched = 0;
 	int found = 0;
 
-	while (hash_array[index] != NULL && found != max_search && searched != num_elements-1)
+	while (hash_array[index] != NULL && found < max_search && searched < num_elements)
 	{
-		char * pch = strstr(hash_array[index]->title,search_term);
+		char *pch = strstr(hash_array[index]->title,search_term);
 		if ( pch != NULL) //if martching substirng is found
-		{
-			
+		{			
 			search_results[found] = hash_array[index]->location;
 			found++;
 		}	
@@ -419,6 +444,7 @@ void add_movie()
 
 	printf("\n\t%d Results Found!\n",found);
 	int selected_movie = select_movie_input(found);
+	if (selected_movie == -1) return;
 
 	//select result and add to current catalog
 	for(int j = 0; j < max_catalog_def; j++)
@@ -494,10 +520,17 @@ int size_current_catalog()
  */
 void print_hash_location(int location) 
 {
-	printf("%s, %d, %s, %.2f, %d, %s, %ld\n",
+	/*printf("%s, %d, %s, %.2f, %d, %s, %ld\n",
 		hash_array[location]->title, hash_array[location]->year,	hash_array[location]->run_time, 
 		hash_array[location]->average_rating, hash_array[location]->num_votes, 
 		hash_array[location]->genre, hash_array[location]->location//debug
+	);
+	printf("\n");*/
+
+		printf("%s, %d, %s, %.2f, %d, %s \n",
+		hash_array[location]->title, hash_array[location]->year,	hash_array[location]->run_time, 
+		hash_array[location]->average_rating, hash_array[location]->num_votes, 
+		hash_array[location]->genre
 	);
 	printf("\n");
 }
