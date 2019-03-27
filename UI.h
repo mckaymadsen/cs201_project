@@ -21,6 +21,9 @@ void search_hash_input();
 void add_movie_display();
 int select_movie_input(int found);
 
+int dis_input();
+int remove_cat_display();
+
 
 
 #endif

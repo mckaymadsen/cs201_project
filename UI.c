@@ -253,7 +253,7 @@ int select_movie_input(int found)
 
     char buf[BUFSIZ];
 
-    printf("\n\tEnter the number of the movies listed above (1 to %d) or \"Cancel\" to not add a movie: ", found);
+    printf("\n\tEnter the number of the movie listed above (1 to %d) or \"Cancel\" to add a movie: ", found);
     fgets(buf, BUFSIZ, stdin);
     while (!valid_input) 
     {
@@ -280,5 +280,50 @@ int select_movie_input(int found)
     }
     
     return -1;
+}
+
+int dis_input()
+{
+    int valid_input = 0;
+	int choice = 0;
+
+    char buf[BUFSIZ];
+
+    printf("\n\tPlease select a distrbuition method by entering the corresponding number.");
+    printf("\n\tEnter \"Cancel\" to quit.");
+    printf("\n\t1. BluRay.\t2. DVD\t3. Digital: \n\tEnter choice: ");
+    fgets(buf, BUFSIZ, stdin);
+    while (!valid_input) 
+    {
+        if ((sscanf(buf, "%d", &choice) == 1) && (choice > 0 && choice < 4 ))
+        {
+                valid_input = 1;
+                return choice;
+        }
+        else if (strcmp(buf,"Cancel\n") == 0)
+        {
+            return -1;
+        }
+        else
+        {     
+            printf("\n\n\tInvalid choice\n");
+            printf("\tPlease enter a number from (1 to 3) or \"Cancel\" to quit: ");
+            fgets(buf, BUFSIZ, stdin);
+            if ((sscanf(buf, "%d", &choice) == 1) && (choice > 0 && choice < 4))
+            {
+                valid_input = 1;
+                return choice;
+            } 
+        }        
+    }
+    
+    return -1;
+}
+
+int remove_cat_display()
+{
+
+
+    return 0;
 }
 

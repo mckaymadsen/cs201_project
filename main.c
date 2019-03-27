@@ -17,21 +17,22 @@
 
 #include "UI.h"
 
-//#define num_elements 36	//numer of elements in dataset
+#define num_elements 36	//numer of elements in dataset
 #define max_search 15
 #define max_catalog_def 50 //catalog
-#define num_elements 511709 //(movies)
+//#define num_elements 511709 //(movies)
 
 struct movie 
 {	
-	char id[11];					//imdb given uniqie ID
-	char title[150];			//Title of movie
-	unsigned long location;				//array location/hash key
-	int year;							//Year movie was released
+	char id[11];			//imdb given uniqie ID
+	char title[150];		//Title of movie
+	unsigned long location;	//array location/hash key
+	int year;				//Year movie was released
 	char run_time[15];
-	char genre[100];			//top genres
-	double average_rating;//average rating
-	int num_votes;				//number of votes for rating
+	char genre[100];		//top genres
+	double average_rating;	//average rating
+	int num_votes;			//number of votes for rating
+	int distribution;		//1 = Blue Ray, 2 = DVD, 3 = Digital
 };
 
 //structures
@@ -174,8 +175,8 @@ int main()
 void load_database(void)
 {
 	FILE *fptr;								//create the file opener
-	fptr = fopen("cs201database_TAB.txt", "r");		//open database 
-	//fptr = fopen("test_data2.txt", "r");
+	//fptr = fopen("cs201database_TAB.txt", "r");		//open database 
+	fptr = fopen("test_data2.txt", "r");
 	//char trash[25];
 	char buff[BUFSIZ];
 	int q = 1;
@@ -205,6 +206,7 @@ void load_database(void)
 		item->num_votes =  atoi(token);
 		token = strtok(NULL,"\t");
 		strcpy(item->genre, token);
+		item->distribution = 0;
 
 
 		long hash_index = hash_function(item->title) % num_elements;		//get hash_index
@@ -338,7 +340,7 @@ int create_catalog()
 int open_catalog(int load_flag)
 {
 	//get catalog name and display catalog
-	char name[55];// = "";
+	char name[55] = "\0";// = "";
 	int not_valid_file = 0;
 	while(not_valid_file == 0)
 	{
@@ -405,8 +407,8 @@ void load_catalog(char filename[55])
 		}
 
 		fscanf(fptr,
-		 	"%10[^\t]\t	%100[^\t]\t %20[^\t]\t	 	  %d\t	  	   %10[^\t]\t		   %lf\t					  %d\t 				%25s",
-			item->id, item->title,	trash, &item->year, item->run_time, &item->average_rating, &item->num_votes, item->genre
+		 	"%10[^\t]\t	%100[^\t]\t %20[^\t]\t	 	  %d\t	  	   %10[^\t]\t		   %lf\t					  %d\t 				%25s %d",
+			item->id, item->title,	trash, &item->year, item->run_time, &item->average_rating, &item->num_votes, item->genre, &item->distribution
 		);
 
 		current_catalog[i] = item;
@@ -420,6 +422,7 @@ void load_catalog(char filename[55])
  */
 void display_catalog()
 {
+	printf("\n\tCatalog: \n\tTitle (first 30 characters)   \t\tYear\tRun Time\tRating\tVotes\tDistribution\n");
 	for (int i = 0; i < max_catalog_def; i++)
 	{
 		//if (current_catalog[i] == NULL && i == 0) printf("\n\tCatalog Empty, add movies through the main screen\n");
@@ -430,12 +433,15 @@ void display_catalog()
 		}
 		else if (current_catalog[i] != NULL)
 		{	
-			printf("\n\t%d.", i);	
-			printf(" %s, %d, %s, %.2f, %d, %s",
+			printf("\n\t%d.", i+1);	
+			printf(" %-30.30s\t%d\t%s\t\t%.2f\t%d\t%s",
 				current_catalog[i]->title, 
 				current_catalog[i]->year,	current_catalog[i]->run_time, current_catalog[i]->average_rating, 
 				current_catalog[i]->num_votes, current_catalog[i]->genre
 			);
+			if (current_catalog[i]->distribution == 1) printf("\t%s"," Distro: BluRay");
+			if (current_catalog[i]->distribution == 2) printf("\t%s"," Distro: DVD");
+			if (current_catalog[i]->distribution == 3) printf("\t%s"," Distro: Digital");
 		}
 	}
 	printf("\n");
@@ -498,12 +504,15 @@ void add_movie()
 	int selected_movie = select_movie_input(found);
 	if (selected_movie == -1) return;
 
+	int distribution = dis_input(); 
+	if (distribution == -1) return;
 	//select result and add to current catalog
 	for(int j = 0; j < max_catalog_def; j++)
 	{
 		if (current_catalog[j] == NULL)
 		{
 			current_catalog[j] = hash_array[search_results[selected_movie-1]];
+			current_catalog[j]->distribution = distribution;
 			printf("\n\tItem added!");
 			break;
 		}
@@ -552,9 +561,10 @@ void save_catalog(int number_of_entries)
 	{
 		if (current_catalog[i] != NULL)
 		{
-			fprintf(fptr,	"%s\t%s\t%s\t%d\t%s\t%lf\t%d\t%s",
+			fprintf(fptr,	"%s\t%s\t%s\t%d\t%s\t%lf\t%d\t%s\t%d",
 			current_catalog[i]->id, current_catalog[i]->title,	trash, current_catalog[i]->year, 
-			current_catalog[i]->run_time, current_catalog[i]->average_rating, current_catalog[i]->num_votes, current_catalog[i]->genre
+			current_catalog[i]->run_time, current_catalog[i]->average_rating, current_catalog[i]->num_votes, current_catalog[i]->genre, 
+			current_catalog[i]->distribution
 			);
 		}
 	}
@@ -569,12 +579,15 @@ int remove_catalog()
 	printf("\n\tWelcome to remove a catalog menu. Enter the filename of the catalog\n");
 	printf("\tyou'd like to remove: ");
 
-  fgets(buf, BUFSIZ, stdin);
-  sscanf(buf, "%s", filename);
+	fgets(buf, BUFSIZ, stdin);
+	sscanf(buf, "%s", filename);
 
 	int status = remove(filename);
 	return status;
 }
+/*
+ * Returns the number of non NULL slots in the current catalog
+ */
 
 int size_current_catalog()
 {
@@ -588,19 +601,13 @@ int size_current_catalog()
 	}
 	return size;
 }
+
 /*
  * This function prints out the data at a given hash location in the table.
  */
 void print_hash_location(int location) 
 {
-	/*printf("%s, %d, %s, %.2f, %d, %s, %ld\n",
-		hash_array[location]->title, hash_array[location]->year,	hash_array[location]->run_time, 
-		hash_array[location]->average_rating, hash_array[location]->num_votes, 
-		hash_array[location]->genre, hash_array[location]->location//debug
-	);
-	printf("\n");*/
-
-		printf("%s, %d, %s, %.2f, %d, %s \n",
+		printf("%s\t%d\t%s\t%.2f\t%d\t%s \n",
 		hash_array[location]->title, hash_array[location]->year,	hash_array[location]->run_time, 
 		hash_array[location]->average_rating, hash_array[location]->num_votes, 
 		hash_array[location]->genre
