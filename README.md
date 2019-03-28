@@ -25,11 +25,15 @@ This datset combines the "basic" and "ratings" datasets found on IMDB's website.
  
  **Setup**
 
- To get the data file, run the command below "wget -v -O cs201database_TAB.txt -L https://alabama.box.com/shared/static/1v5z0nt0nspobdxqcgw590mvelbg4xiq.txt" If, for some reason
+ To get the data file, run the command below: 
+ 
+ "wget -v -O cs201database_TAB.txt -L https://alabama.box.com/shared/static/1v5z0nt0nspobdxqcgw590mvelbg4xiq.txt". 
+ 
+ If, for some reason
  this doesnt work, the file can be manually downloaded from the link about in the Dataset section.
 
  To run the program, type "make" in the terminal. To run the program, type "./prog". Expect for the database to take aobut 15 seconds to load.
- A message will appear showing the dataset has been loaded.
+ A message will appear showing the dataset has been loaded and you can begin using the program.
 
  **Using the Program**
 
