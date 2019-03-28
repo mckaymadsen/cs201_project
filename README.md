@@ -47,6 +47,7 @@ This datset combines the "basic" and "ratings" datasets found on IMDB's website.
  ## Dicussion of Design Choices
  
  **Data Structure**
+ 
  The main data structure used was a hash table with linear probing and the DJB2 hashig function. This was done to provide a ~O(1) 
  search time when the search term is the Exact title. Quadatric probing was chosen due to the ease of use and to help avoid collisons
  as tehre are several movies with the same title (i.e there are over 5 movies called "Star").
@@ -57,9 +58,10 @@ This datset combines the "basic" and "ratings" datasets found on IMDB's website.
  or decreaed in the code.
 
  **Searching**
+ 
  The search is done with the strstr function in the string.h library. It returns a pointer to the first location of a string in the
  given second string. Becuase a hash table was used, there is really no way to avoid a linear search when looking for substrings.
- However, given the O(1) time for a Exact Title search and the increased search ability, this was deemed acceptable. 
+ However, given the O(1) time for a Exact Title search and the increased search ability, this was deemed acceptable. Given the dataset size and complexity, easier searching and a rapid exact title search was deemed more important.
  
  ## HELP
 Contact mmadsen@crimson.ua.edu with the issue.
