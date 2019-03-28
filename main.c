@@ -17,10 +17,10 @@
 
 #include "UI.h"
 
-#define num_elements 36	//numer of elements in dataset
+//#define num_elements 36	//numer of elements in dataset
 #define max_search 15
 #define max_catalog_def 50 //catalog
-//#define num_elements 511709 //(movies)
+#define num_elements 511709 //(movies)
 
 struct movie 
 {	
@@ -187,7 +187,7 @@ void load_database(void)
 	FILE *fptr;								//create the file opener
 	//fptr = fopen("cs201database_TAB.txt", "r");		//open database 
 	fptr = fopen("test_data2.txt", "r");
-	//char trash[25];
+	
 	char buff[BUFSIZ];
 	int q = 1;
 	int i = 0;
@@ -199,8 +199,7 @@ void load_database(void)
 		{
 			printf("error allocating memory for movie %d\n", i);
 		}
-		//initalize(item);
-
+		
 		fgets(buff, BUFSIZ, fptr);
 		char *token = strtok(buff,"\t");
 		strcpy(item->id, token);
@@ -232,7 +231,7 @@ void load_database(void)
 			//go to next cell
 			//++hash_index;	
 			//hash_index = hash_index %= num_elements;			
-			//wrap around the table
+			//wrap around the table with quadradic probing
 			hash_index = (hash_index + (q * q))% num_elements;
 		}
 		hash_array[hash_index] = item;
@@ -410,10 +409,12 @@ void load_catalog(char filename[55])
 			printf("\nFileread Error. Please try again with the correct title.");
 	}
 
-	char trash[25];
+char buff[BUFSIZ];
+	//char trash[25];
 	int num_movies = 0;
-	fscanf(fptr," %d", &num_movies);
-
+	//fscanf(fptr," %d", &num_movies);
+	fgets(buff, BUFSIZ, fptr);
+	num_movies = atoi(buff);
 	for (int i = 0; i < num_movies; i++)
 	{
 		struct movie *item = (struct movie*) malloc(sizeof(struct movie));	//create new item with malloc
@@ -422,10 +423,34 @@ void load_catalog(char filename[55])
 			printf("error allocating memory for movie %d\n", i);
 		}
 
-		fscanf(fptr,
+		/*fscanf(fptr,
 		 	"%10[^\t]\t	%100[^\t]\t %20[^\t]\t	 	  %d\t	  	   %10[^\t]\t		   %lf\t					  %d\t 				%25s %d",
 			item->id, item->title,	trash, &item->year, item->run_time, &item->average_rating, &item->num_votes, item->genre, &item->distribution
-		);
+		);*/
+
+		fgets(buff, BUFSIZ, fptr);
+		char *token = strtok(buff,"\t");
+		strcpy(item->id, token);
+		token = strtok(NULL,"\t");
+		strcpy(item->title, token);
+		token = strtok(NULL,"\t");	//trash
+		token = strtok(NULL,"\t");
+		item->year = atoi(token);
+		token = strtok(NULL,"\t");
+		strcpy(item->run_time,token);
+		token = strtok(NULL,"\t");
+		item->average_rating = atof(token);
+		token = strtok(NULL,"\t");
+		item->num_votes =  atoi(token);
+		token = strtok(NULL,"\t");
+		strcpy(item->genre, token);
+		
+		char *p = strchr(item->genre, '\n');  //removes trailing newline from mainfile
+		if (p != NULL) *p = '\0';
+		
+		token = strtok(NULL,"\t");
+		//strcpy(item->genre, token);
+		item->distribution = atoi(token);
 
 		current_catalog[i] = item;
 		//free(item);
@@ -598,11 +623,12 @@ void save_catalog(int number_of_entries)
 	{
 		if (current_catalog[i]->distribution > 0)// != NULL)
 		{
-			fprintf(fptr,	"%s\t%s\t%s\t%d\t%s\t%lf\t%d\t%s\t%d",
+			fprintf(fptr,	"\n%s\t%s\t%s\t%d\t%s\t%lf\t%d\t%s\t%d",
 			current_catalog[i]->id, current_catalog[i]->title,	trash, current_catalog[i]->year, 
 			current_catalog[i]->run_time, current_catalog[i]->average_rating, current_catalog[i]->num_votes, current_catalog[i]->genre, 
 			current_catalog[i]->distribution
 			);
+			//if (i < size_current_catalog()-2) fprintf(fptr,"\n");
 		}
 	}
 	fclose(fptr);
