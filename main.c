@@ -7,7 +7,7 @@
  *  Notes:
  * 		Requires: UI.c
  *  TODO:
- * 		removle movies from catalog, clean up, fix search
+ * 		redo load caatalog clean up, fix search
  * optimize
  */
 
@@ -553,7 +553,7 @@ void delete_movie()
 	int cat_size = size_current_catalog();
 	display_catalog();
 	int movie_choice = remove_cat_display(cat_size);
-	printf("%d",movie_choice);
+	
 	if (movie_choice == -1)
 	{
 		printf("\n\tMovie removal unsucessful, please try again\n");
@@ -606,8 +606,6 @@ void save_catalog(int number_of_entries)
 		}
 	}
 	fclose(fptr);
-
-	printf("%s test", current_catalog[0]->genre);
 
 	return;
 }
