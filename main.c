@@ -59,6 +59,9 @@ int open_catalog(int load_flag);
 void add_movie(void);
 void delete_movie();
 
+struct movie *initalize(struct movie* item);
+int initialize_current_catalog();
+
 //driver functions
 int size_current_catalog(void);
 void print_hash_location(int location);
@@ -68,6 +71,8 @@ int main()
 	int max_catalog = max_catalog_def;
 	display_start();
 	
+	
+
 	printf("\n\tLoading dataset ");
 	load_database();
 	printf("Load Complete\n");	
@@ -80,6 +85,9 @@ int main()
 	int remove_catalog_result = 0;
 	//int ucc_exit = 0;
 	//int exit_flag = 0;
+
+int curr_cat = initialize_current_catalog();
+	if (curr_cat == -1) printf("Error, please exit");
 
 	while(main_menu_choice != -1)	//looop until exit xuit
 	{
@@ -160,6 +168,8 @@ int main()
 					break;
 			}
 	}	
+
+	
 	return 0;
 }
 
@@ -189,6 +199,7 @@ void load_database(void)
 		{
 			printf("error allocating memory for movie %d\n", i);
 		}
+		//initalize(item);
 
 		fgets(buff, BUFSIZ, fptr);
 		char *token = strtok(buff,"\t");
@@ -206,6 +217,10 @@ void load_database(void)
 		item->num_votes =  atoi(token);
 		token = strtok(NULL,"\t");
 		strcpy(item->genre, token);
+		
+		char *p = strchr(item->genre, '\n');  //removes trailing newline from mainfile
+		if (p != NULL) *p = '\0';
+		
 		item->distribution = 0;
 
 
@@ -231,6 +246,7 @@ void load_database(void)
 		//if(i%2 == 0) printf(". ");
 		if(i%75000 == 0) printf(". ");
 		i++;
+
 	}
 
 	fclose(fptr);
@@ -412,8 +428,10 @@ void load_catalog(char filename[55])
 		);
 
 		current_catalog[i] = item;
+		//free(item);
 	}
 
+	
 	printf("\n\tCatalog Loaded Sucessfully\n");
 }
 
@@ -431,7 +449,7 @@ void display_catalog()
 			printf("\n\tCatalog Empty, add movies through the main screen\n");
 			return;
 		}
-		else if (current_catalog[i] != NULL)
+		else if (current_catalog[i]->distribution > 0)// != NULL)
 		{	
 			printf("\n\t%d.", i+1);	
 			printf(" %-30.30s\t%d\t%s\t\t%.2f\t%d\t%s",
@@ -509,10 +527,11 @@ void add_movie()
 	//select result and add to current catalog
 	for(int j = 0; j < max_catalog_def; j++)
 	{
-		if (current_catalog[j] == NULL)
+		if (current_catalog[j]->distribution == 0)// || strcmp(current_catalog[j]->title, "\0"))
 		{
 			current_catalog[j] = hash_array[search_results[selected_movie-1]];
 			current_catalog[j]->distribution = distribution;
+
 			printf("\n\tItem added!");
 			break;
 		}
@@ -531,7 +550,24 @@ void add_movie()
  */
 void delete_movie()
 {
+	int cat_size = size_current_catalog();
+	display_catalog();
+	int movie_choice = remove_cat_display(cat_size);
+	printf("%d",movie_choice);
+	if (movie_choice == -1)
+	{
+		printf("\n\tMovie removal unsucessful, please try again\n");
+		return;
+	}
+	//strcpy(current_catalog[movie_choice-1]->title, "\0"); 
+	for (int i = movie_choice-1; i < max_catalog_def; i++)
+	{
+		if (i < max_catalog_def-1)//(strcmp(current_catalog[i]->title, "\0") == 0)
+			current_catalog[i] = current_catalog[i+1]; 
+	}
 
+	printf("\n\tMovie Sucessfully Removed\n");
+	return;
 }
 
 /*
@@ -554,12 +590,13 @@ void save_catalog(int number_of_entries)
 	if (fptr == NULL)
 	{
 			printf("\nFileread Error. Please try again.");
+			return; 
 	}
 
 	fprintf(fptr, "%d", size_current_catalog());
 	for (int i = 0; i < max_catalog_def; i++)
 	{
-		if (current_catalog[i] != NULL)
+		if (current_catalog[i]->distribution > 0)// != NULL)
 		{
 			fprintf(fptr,	"%s\t%s\t%s\t%d\t%s\t%lf\t%d\t%s\t%d",
 			current_catalog[i]->id, current_catalog[i]->title,	trash, current_catalog[i]->year, 
@@ -569,6 +606,9 @@ void save_catalog(int number_of_entries)
 		}
 	}
 	fclose(fptr);
+
+	printf("%s test", current_catalog[0]->genre);
+
 	return;
 }
 
@@ -592,13 +632,14 @@ int remove_catalog()
 int size_current_catalog()
 {
 	int size = 0;
-	for(int j = 0; j < max_catalog_def; j++)
+	/*for(int j = 0; j < max_catalog_def; j++)
 	{
-		if (current_catalog[j] != NULL)
+		if (current_catalog[j]->distribution > 0)
 		{
 			size++;
 		}
-	}
+	}*/
+	size = sizeof(current_catalog)/sizeof(current_catalog[0]);
 	return size;
 }
 
@@ -613,4 +654,34 @@ void print_hash_location(int location)
 		hash_array[location]->genre
 	);
 	printf("\n");
+}
+
+
+int initialize_current_catalog()
+{
+	struct movie *item = (struct movie*) malloc(sizeof(struct movie));	//create new item with malloc
+	if (item == NULL)
+	{
+			printf("error allocating memory for movie \n");
+	}
+	
+	for(int i = 0; i < max_catalog_def; i++)
+	{
+		current_catalog[i] = initalize(item) ;
+	}
+	//free(item);
+	return 1;
+}
+struct movie *initalize(struct movie* item)
+{
+	strcpy(item->title, "\0");
+	item->year = 0;
+	strcpy(item->run_time,"\0");
+	item->num_votes = 0;
+	item->average_rating = 0.00;
+	strcpy(item->genre,"\0");
+	item->distribution = 0;
+
+	//free(item);
+	return item;
 }

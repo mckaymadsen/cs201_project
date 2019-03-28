@@ -22,7 +22,7 @@ void add_movie_display();
 int select_movie_input(int found);
 
 int dis_input();
-int remove_cat_display();
+int remove_cat_display(int cat_size);
 
 
 

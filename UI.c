@@ -320,9 +320,42 @@ int dis_input()
     return -1;
 }
 
-int remove_cat_display()
+int remove_cat_display(int cat_size)
 {
+    int valid_input = 0;
+	int choice = 0;
 
+    char buf[BUFSIZ];
+
+    printf("\n\tEnter the movie number you'd like to remove.");
+    printf("\n\tEnter \"Cancel\" to quit. ");
+
+    fgets(buf, BUFSIZ, stdin);
+    while (!valid_input) 
+    {
+        if ((sscanf(buf, "%d", &choice) == 1) && (choice > 0 && choice < cat_size+1 ))
+        {
+                valid_input = 1;
+                return choice;
+        }
+        else if (strcmp(buf,"Cancel\n") == 0)
+        {
+            return -1;
+        }
+        else
+        {     
+            printf("\n\n\tInvalid choice\n");
+            printf("\tPlease enter a number from (1 to %d) or \"Cancel\" to quit: ", cat_size+1);
+            fgets(buf, BUFSIZ, stdin);
+            if ((sscanf(buf, "%d", &choice) == 1) && (choice > 0 && choice < cat_size+1))
+            {
+                valid_input = 1;
+                return choice;
+            } 
+        }        
+    }
+    
+    return -1;
 
     return 0;
 }
