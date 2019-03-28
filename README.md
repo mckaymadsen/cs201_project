@@ -55,7 +55,7 @@ This datset combines the "basic" and "ratings" datasets found on IMDB's website.
  Each movie has its data stored in a struct.
 
  For the user catalog, a simple array was chosen due to the small size of the catalogs (<50), although this can be easily increased
- or decreaed in the code.
+ or decreased in the code.
 
  **Searching**
  
