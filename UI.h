@@ -17,8 +17,6 @@ void update_catalog_display();
 int update_catalog_input();
 
 void search_hash_display(int max_search);
-void search_hash_input();
-void add_movie_display();
 int select_movie_input(int found);
 
 int dis_input();

@@ -98,7 +98,6 @@ void create_catalog_display(int max_catalog)
  * Reads in user input to determine choice for the create catalog menu.
  * A 1 creates a catalog and a 2 goes back to the previous menu.
  */
-
 int create_catalog_input()
 {
     int valid_input = 0;
@@ -133,6 +132,9 @@ int create_catalog_input()
     return 0;
 }
 
+/*
+ * Display driver for read catalog function
+ */
 void read_catalog_display(int max_catalog)
 {
     printf("\n\tRead/Load a catalog menu!\n\tThe max size of a catalog is currently set to %d\n", max_catalog);
@@ -146,6 +148,9 @@ void read_catalog_display(int max_catalog)
     printf("\n\tEnter 1-5, then press enter: ");
 }
 
+/*
+ * Input getter for read catalog function
+ */
 int read_catalog_input()
 {
     int valid_input = 0;
@@ -180,6 +185,9 @@ int read_catalog_input()
     return 0;
 }
 
+/*
+ * Display driver for update catalog function
+ */
 void update_catalog_display(int max_catalog)
 {
     printf("\n\tUpdate a catalog menu!\n\tThe max size of a catalog is currently set to %d\n", max_catalog);
@@ -192,6 +200,9 @@ void update_catalog_display(int max_catalog)
     printf("\n\tEnter 1-5, then press enter: ");
 }
 
+/*
+ * Input getter for update catalog function
+ */
 int update_catalog_input()
 {
     int valid_input = 0;
@@ -226,6 +237,9 @@ int update_catalog_input()
     return -1;
 }
 
+/*
+ * Display driver for search hash function
+ */
 void search_hash_display(int max_search)
 {
     printf("\n\tSearch for a movie!\n");
@@ -236,16 +250,9 @@ void search_hash_display(int max_search)
     printf("\n\tEnter search term (min of 3 characters, max of 150 characters): ");
 }
 
-void search_hash_input()
-{
-
-}
-
-void add_movie_display()
-{
-
-}
-
+/*
+ * Input getter for the select movie 
+ */
 int select_movie_input(int found)
 {
     int valid_input = 0;
@@ -282,6 +289,9 @@ int select_movie_input(int found)
     return -1;
 }
 
+/*
+ * Display driver and input getter for the distribution chioce in the add movie function
+ */
 int dis_input()
 {
     int valid_input = 0;
@@ -320,6 +330,9 @@ int dis_input()
     return -1;
 }
 
+/*
+ * Dispaly driver for the remove Catalog Menu. 
+ */
 int remove_cat_display(int cat_size)
 {
     int valid_input = 0;
@@ -356,7 +369,6 @@ int remove_cat_display(int cat_size)
     }
     
     return -1;
-
-    return 0;
+    //return 0;
 }
 
