@@ -60,11 +60,6 @@ This datset combines the "basic" and "ratings" datasets found on IMDB's website.
  The search is done with the strstr function in the string.h library. It returns a pointer to the first location of a string in the
  given second string. Becuase a hash table was used, there is really no way to avoid a linear search when looking for substrings.
  However, given the O(1) time for a Exact Title search and the increased search ability, this was deemed acceptable. 
-
-
- 
- ### Tips
- TODO
  
  ## HELP
- TODO
+Contact mmadsen@crimson.ua.edu with the issue.
