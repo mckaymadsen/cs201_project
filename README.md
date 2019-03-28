@@ -37,7 +37,7 @@ This datset combines the "basic" and "ratings" datasets found on IMDB's website.
 
  **Using the Program**
 
- All menu choice are done by selecting a number corresponding to an option. THere is an option to "Go back" or "Exit" each menu.
+ All menu choice are done by selecting a number corresponding to an option. There is an option to "Go back" or "Exit" each menu.
  This will return you to the previous menu or exit the program.
 
  ***Tips***
