@@ -303,6 +303,9 @@ int dis_input()
     printf("\n\tEnter \"Cancel\" to quit.");
     printf("\n\t1. BluRay.\t2. DVD\t3. Digital: \n\tEnter choice: ");
     fgets(buf, BUFSIZ, stdin);
+    char *p = strrchr(buf, '\n');  	//removes trailing newline 
+	if (p != NULL) *p = '\0';
+
     while (!valid_input) 
     {
         if ((sscanf(buf, "%d", &choice) == 1) && (choice > 0 && choice < 4 ))
