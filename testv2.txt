@@ -1,0 +1,4 @@
+3
+tt1977812	Here Kitty!	bogus	1973	60	0.000000	0	2	None Given
+tt1523581	William Krisel, Architect	bogus	2010	\N	8.300000	10	1	None Given
+tt2275656	Star Wars: Threads of Destiny	bogus	2014	110	4.100000	482	3	None Given

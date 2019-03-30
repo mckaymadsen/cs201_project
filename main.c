@@ -15,11 +15,11 @@
 
 #include "UI.h"
 
-#define num_elements 36	//numer of elements in dataset
+//#define num_elements 36	//numer of elements in dataset
 //#define num_elements 511687	//numer of elements in dataset
 #define max_search 15
 #define max_catalog_def 50 //catalog
-//#define num_elements 511709 //(movies)
+#define num_elements 511709 //(movies)
 
 
 //ISSUE IS MEMORYSIZE. Stops working when the fill; files is used
@@ -212,8 +212,8 @@ void load_database(Hash_table *hash_array)
 {
 	FILE *fptr;										//create the file opener
 	//fptr = fopen("cs201database_TAB.txt", "r");		//open database 
-	fptr = fopen("test_data2.txt", "r");//debug
-	//fptr = fopen("finalV2.txt", "r");
+	//fptr = fopen("test_data2.txt", "r");//debug
+	fptr = fopen("finalV3.txt", "r");
 	
 	char buff[1024];
 	int q = 1;
@@ -262,7 +262,7 @@ void load_database(Hash_table *hash_array)
 		hash_array[hash_index].movie = item;
 		//hash_array->movie[hash_index] = *item;
 		hash_array[hash_index].movie->location = hash_index;
-		print_movie(hash_array[hash_index].movie); //debug
+		//print_movie(hash_array[hash_index].movie); //debug
 
 		if(i%75000 == 0) printf(". ");
 		i++;
@@ -388,6 +388,10 @@ void load_catalog(char filename[55], Catalog *current_catalog)
 	int num_movies = 0;
 	fgets(buff, 1024, fptr);
 	num_movies = atoi(buff);
+	if (num_movies == 0) 
+	{
+		printf("\n\tCatalog blank or corrupted, please load a different one.\n");
+	} 
 	for (int i = 0; i < num_movies; i++)
 	{
 		Movie *item = (Movie *)malloc(sizeof(Movie));	//create new item with malloc
@@ -412,15 +416,18 @@ void load_catalog(char filename[55], Catalog *current_catalog)
 		token = strtok(NULL,"\t");
 		item->num_votes =  atoi(token);
 		token = strtok(NULL,"\t");
+		item->distribution = atoi(token);
+		token = strtok(NULL,"\n");
 		strcpy(item->genre, token);
 		
 		char *p = strrchr(item->genre, '\n');  	//removes trailing newline from mainfile
 		if (p != NULL) *p = '\0';
 		
-		token = strtok(NULL,"\t");
-		item->distribution = atoi(token);
+		/*token = strtok(NULL,"\t");
+		item->distribution = atoi(token);*/
 
 		current_catalog[i].movie = item;
+		//fgets(buff, 1024, fptr);
 	}
 	for (int j = num_movies; j < max_catalog_def; j++)
 	{
@@ -435,7 +442,7 @@ void load_catalog(char filename[55], Catalog *current_catalog)
  */
 void display_catalog(Catalog *current_catalog)
 {
-	printf("\n\tCatalog: \n\tTitle (first 30 characters)   \t\tYear\tRun Time\tRating\tVotes\tGenre\tDistribution\n");
+	printf("\n\tCatalog: \n\tTitle (first 30 characters)   \t\tYear\tRun Time\tRating\tVotes\tDistribution\tGenre\n");
 	for (int i = 0; i < max_catalog_def; i++)
 	{
 		if (size_current_catalog(current_catalog) == 0)
@@ -447,14 +454,16 @@ void display_catalog(Catalog *current_catalog)
 		else if (current_catalog[i].movie->distribution > 0)
 		{	
 			printf("\n\t%d.", i+1);	
-			printf(" %-30.30s\t%d\t%s\t\t%.2f\t%d\t%s",
+			printf(" %-30.30s\t%d\t%s\t\t%.2f\t%d",
 				current_catalog[i].movie->title, 
 				current_catalog[i].movie->year,	current_catalog[i].movie->run_time, current_catalog[i].movie->average_rating, 
-				current_catalog[i].movie->num_votes, current_catalog[i].movie->genre
+				current_catalog[i].movie->num_votes 
 			);
-			if (current_catalog[i].movie->distribution == 1) printf("\t%s"," Distro: BluRay");
-			if (current_catalog[i].movie->distribution == 2) printf("\t%s"," Distro: DVD");
-			if (current_catalog[i].movie->distribution == 3) printf("\t%s"," Distro: Digital");
+			if (current_catalog[i].movie->distribution == 1) printf("\t%s"," BluRay");
+			if (current_catalog[i].movie->distribution == 2) printf("\t%s"," DVD");
+			if (current_catalog[i].movie->distribution == 3) printf("\t%s"," Digital");
+
+			printf("\t%s",current_catalog[i].movie->genre);
 		}
 	}
 	printf("\n");
@@ -626,10 +635,14 @@ void save_catalog(int number_of_entries, Catalog *current_catalog)
 	{
 		if (current_catalog[i].movie->distribution > 0)
 		{
-			fprintf(fptr,	"\n%s\t%s\t%s\t%d\t%s\t%lf\t%d\t%s\t%d",
+			/*char *p = strrchr(current_catalog[i].movie->genre, '\n');  	//removes trailing newline from mainfile
+			if (p != NULL) *p = '\0';*/
+
+			fprintf(fptr,	"\n%s\t%s\t%s\t%d\t%s\t%lf\t%d\t%d\t%s",
 			current_catalog[i].movie->id, current_catalog[i].movie->title,	trash, current_catalog[i].movie->year, 
-			current_catalog[i].movie->run_time, current_catalog[i].movie->average_rating, current_catalog[i].movie->num_votes, current_catalog[i].movie->genre, 
-			current_catalog[i].movie->distribution
+			current_catalog[i].movie->run_time, current_catalog[i].movie->average_rating, current_catalog[i].movie->num_votes, 
+			current_catalog[i].movie->distribution,	current_catalog[i].movie->genre 
+			
 			);
 		}
 	}
@@ -677,9 +690,9 @@ int size_current_catalog(Catalog *current_catalog)
 void print_movie(Movie *movie) 
 {
 		//printf("%s\t%d\t%s\t%.2f\t%d\t%s",
-		printf("\t%-30.30s\t%d\t%s\t\t%.2f\t%d\t%s\n",
+		printf("\t%-30.30s\t%d\t%s\t\t%.2f\t%d\t%d\t%s\n",
 		movie->title, movie->year,	movie->run_time, 
-		movie->average_rating, movie->num_votes, 
+		movie->average_rating, movie->num_votes, movie->distribution,
 		movie->genre
 	);
 	//printf("\n");
