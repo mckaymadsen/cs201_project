@@ -15,20 +15,20 @@
 
 #include "UI.h"
 
-//#define num_elements 36	//numer of elements in dataset
+#define num_elements 36	//numer of elements in dataset
 //#define num_elements 511687	//numer of elements in dataset
 #define max_search 15
 #define max_catalog_def 50 //catalog
-#define num_elements 511709 //(movies)
+//#define num_elements 511709 //(movies)
 
 
 //ISSUE IS MEMORYSIZE. Stops working when the fill; files is used
 //look at using malloc instead of regular 
 
-struct movie 
+typedef struct  
 {	
 	char id[11];			//imdb given uniqie ID
-	char title[150];		//Title of movie
+	char title[100];		//Title of movie
 	unsigned long location;	//array location/hash key
 	int year;				//Year movie was released
 	char run_time[15];
@@ -36,55 +36,69 @@ struct movie
 	double average_rating;	//average rating
 	int num_votes;			//number of votes for rating
 	int distribution;		//1 = Blue Ray, 2 = DVD, 3 = Digital
-};
+}Movie;
 
-//structures
+typedef struct 
+{
+	Movie *movie;
+}Hash_table;
+
+
+typedef struct 
+{
+	Movie *movie;
+}Catalog;
+
+/*//structures
 struct movie *dummy_item;
 struct movie *current_catalog[max_catalog_def];
 //struct movie *hash_array[num_elements];
-//struct movie *current_catalog[max_catalog_def];
+//struct movie *current_catalog[max_catalog_def];*/
 
 //struct functions
-struct movie *delete(struct movie *item);
-struct movie *initalize(struct movie* item);
+Movie *initalize(void);
+
 
 //manage catalog functions
-void load_catalog(char filename[55]);
-void display_catalog(void);
-void save_catalog(int number_of_entries);
+void load_catalog(char *filename, Catalog *current_catalog);
+void display_catalog(Catalog *current_catalog);
+void save_catalog(int number_of_entries, Catalog *current_catalog);
 int create_catalog(void);
 int remove_catalog(void);
-int open_catalog(int load_flag);
+int open_catalog(int load_flag, Catalog *current_catalog);
 
 //update catalog functions
-void add_movie(struct movie **hash_array);
-void delete_movie();
+void add_movie(Hash_table *hash_array, Catalog *current_catalog);
+void delete_movie(Catalog *current_catalog);
 
 //driver functions
-int size_current_catalog(void);
-void print_hash_location(int location, struct movie **hash_array);
-void load_database(struct movie **hash_array);
+int size_current_catalog(Catalog *current_catalog);
+
+void print_movie(Movie *movie);
+void print_hash_location(unsigned long loc, Hash_table *hash_array);
+
+void load_database(Hash_table *hash_array);
 unsigned long hash_function(char *title);
-long search_hash(char search_term[50], long search_results[max_search], struct movie **hash_array);
-int initialize_current_catalog();
+long search_hash(char search_term[50], unsigned long search_results[max_search], Hash_table *hash_array);
+
 
 int main() 
 {
 	int max_catalog = max_catalog_def;
 
-	struct movie **hash_array = malloc(num_elements * sizeof(struct movie));
-	/*for (int x = 0; x < num_elements; x++)
+	Hash_table *hash_array = (Hash_table*)malloc(num_elements * sizeof(Movie*));
+	for (int x = 0; x < num_elements; x++)
 	{
-		
-		strcpy(hash_array[x]->title, "\0");
-		hash_array[x]->year = 0;
-		strcpy(hash_array[x]->run_time, "\0");
-		hash_array[x]->average_rating = 0.00;
-		hash_array[x]->num_votes = 0;
-		strcpy(hash_array[x]->genre,  "\0");					
-			
-		hash_array[x]->location = 0;
-	}*/
+		hash_array[x].movie = malloc(sizeof(Movie));
+		hash_array[x].movie = initalize();
+	}
+
+	Catalog *current_catalog = (Catalog*)malloc(max_catalog_def * sizeof(Movie*));
+	for (int y = 0; y < max_catalog_def; y++)
+	{
+		current_catalog[y].movie = malloc(sizeof(Movie));
+		current_catalog[y].movie = initalize();
+	}	
 
 	display_start();
 	
@@ -98,9 +112,6 @@ int main()
 	int read_catalog_choice = 0;
 
 	int remove_catalog_result = 0;
-
-	int curr_cat = initialize_current_catalog();
-	if (curr_cat == -1) printf("Error, please exit");
 
 	/*
 	 * This is the main driver for the UI setup
@@ -131,16 +142,16 @@ int main()
 						switch(update_catalog_choice)
 						{
 							case 1:	//Display current
-								display_catalog();
+								display_catalog(current_catalog);
 								break;
 							case 2:	//add movie
-								add_movie(hash_array);
+								add_movie(hash_array, current_catalog);
 								break;
 							case 3: // delete movie
-								delete_movie();
+								delete_movie(current_catalog);
 								break;
 							case 4:	//save catalog to file
-								save_catalog(size_current_catalog());
+								save_catalog(size_current_catalog(current_catalog), current_catalog);
 								break;	
 							case 5: //exit
 								ucc_exit = 1;
@@ -156,10 +167,10 @@ int main()
 					read_catalog_choice = read_catalog_input();
 
 					if (read_catalog_choice == 5) break;
-					else if(read_catalog_choice == 1) open_catalog(0);
-					else if(read_catalog_choice == 2) display_catalog();
-					else if(read_catalog_choice == 3) open_catalog(1);
-					else if(read_catalog_choice == 4) save_catalog(size_current_catalog());					
+					else if(read_catalog_choice == 1) open_catalog(0, current_catalog);
+					else if(read_catalog_choice == 2) display_catalog(current_catalog);
+					else if(read_catalog_choice == 3) open_catalog(1, current_catalog);
+					else if(read_catalog_choice == 4) save_catalog(size_current_catalog(current_catalog), current_catalog);					
 
 					read_catalog_choice = 0;		//reset choice
 					break;
@@ -183,6 +194,8 @@ int main()
 			}
 	}	
 	free(hash_array);	
+	free(current_catalog);
+	//free(movie);
 	return 0;
 }
 
@@ -195,12 +208,12 @@ int main()
  * the hash location. The DJBZ hash algrothim is used. Linear probing is used to resolve 
  * collisions. The hash table is hard coded to have enough slots to fit all results. 
  */
-void load_database(struct movie **hash_array)
+void load_database(Hash_table *hash_array)
 {
 	FILE *fptr;										//create the file opener
 	//fptr = fopen("cs201database_TAB.txt", "r");		//open database 
-	//fptr = fopen("test_data2.txt", "r");//debug
-	fptr = fopen("finalV2.txt", "r");
+	fptr = fopen("test_data2.txt", "r");//debug
+	//fptr = fopen("finalV2.txt", "r");
 	
 	char buff[1024];
 	int q = 1;
@@ -208,7 +221,7 @@ void load_database(struct movie **hash_array)
 
 	while (i < num_elements)						//Read until number of items is complete (bad way, but it works)
 	{
-		struct movie *item = (struct movie*) malloc(sizeof(struct movie));	//create new item with malloc
+		Movie *item = malloc(sizeof(Movie));	//create new item with malloc
 		if (item == NULL)
 		{
 			printf("error allocating memory for movie %d\n", i);
@@ -230,7 +243,8 @@ void load_database(struct movie **hash_array)
 		item->num_votes =  atoi(token);
 		token = strtok(NULL,"\t");
 		strcpy(item->genre, token);
-		
+		token = strtok(NULL,"\t");
+
 		char *p = strrchr(item->genre, '\n');  		//removes trailing newline from genre in mainfile
 		if (p != NULL) *p = '\0';
 		
@@ -240,43 +254,23 @@ void load_database(struct movie **hash_array)
 		long hash_index = hash_function(item->title) % num_elements;		
 		
 		//add item to hash table
-		while(hash_array[hash_index] != NULL)// && hash_array[hash_index]->location != 0) ///////COULD BE PROBLEM!?!!?!?!?!?!?!!?!?
+		while(strcmp(hash_array[hash_index].movie->title, "\0") != 0)
 		{			
 			//wrap around the table with quadradic probing
 			hash_index = (hash_index + (q * q))% num_elements;
 		}
-		hash_array[hash_index] = item;
-		hash_array[hash_index]->location = hash_index;
-		//print_hash_location(hash_index, hash_array);
-
-		//printf("\n%s", hash_array[hash_index]->title);
-		/*strcpy(hash_array[hash_index]->title, item->title);
-		hash_array[hash_index]->year = item->year;
-		strcpy(hash_array[hash_index]->run_time, item->run_time);
-		hash_array[hash_index]->average_rating = item->average_rating;
-		hash_array[hash_index]->num_votes = item->num_votes;
-		strcpy(hash_array[hash_index]->genre, item->genre);					
-			
-		hash_array[hash_index]->location = hash_index;*/
-
-
+		hash_array[hash_index].movie = item;
+		//hash_array->movie[hash_index] = *item;
+		hash_array[hash_index].movie->location = hash_index;
+		print_movie(hash_array[hash_index].movie); //debug
 
 		if(i%75000 == 0) printf(". ");
 		i++;
-		free(item);
+		//free(item);
 	}
 	
 	fclose(fptr);
 	return;
-}
-
-/*
- * The function frees the struct
- */
-struct movie *delete(struct movie *item)
-{
-	free(item);	
-	return NULL;
 }
 
 /*
@@ -293,43 +287,7 @@ unsigned long hash_function(char *title)
   return hash;
 }
 
-/*
- * This function searches for string matches in the hash table.
- * The string to be searched for is put into the hash function
- * and the returned index is used as a starting point. This is not
- * a very effiecent searach for partial strings, but will give 
- * close to O(1) results when the exact title is used. 
- */
-long search_hash(char search_term[50],long search_results[max_search], struct movie **hash_array)
-{
-	int start_index = hash_function(search_term) % num_elements;
-	int index = start_index;
-	int searched = 0;
-	int found = 0;
-		
-		print_hash_location(15, hash_array);
-	
-	while (hash_array[index] != NULL && found < max_search && searched < num_elements) //COUDL BE PROBELM!?!?!!?!
-	{
-		
-		char *pch = strstr(hash_array[index]->title, search_term);
-		if ( pch != NULL) 		//if matching substirng is found
-		{			
-			search_results[found] = hash_array[index]->location;
-			//print_hash_location(hash_array[index]->location, hash_array);
-			found++;
-		}	
 
-		index++;
-		index %= num_elements;
-
-		searched++;
-	}
-	if (searched == 0)	return -1;
-	printf("%d", found);
-	printf("\t%d", searched);
-	return 0;
-}
 
 /*
  * This function returns a 1 when a catalog is created sucessfully and a -1 if it failed.
@@ -370,7 +328,7 @@ int create_catalog()
  * This function loads a catalog when given a filename (string). If not string is given
  * i.e. string == NULL, it prompts the user for the filename.
  */
-int open_catalog(int load_flag)
+int open_catalog(int load_flag, Catalog *current_catalog)
 {
 	char name[55] = "\0";
 	int not_valid_file = 0;
@@ -405,8 +363,8 @@ int open_catalog(int load_flag)
 		printf("\n\tOpened sucessfully!\n");
 		not_valid_file = 1;
 		fclose(fptr);
-		load_catalog(name);
-		if (!load_flag)	display_catalog();			
+		load_catalog(name, current_catalog);
+		if (!load_flag)	display_catalog(current_catalog);			
 		return 1;
 	}	
 	return 0;
@@ -416,7 +374,7 @@ int open_catalog(int load_flag)
  * This function loads a text file containing movie data into the current catalog. Is uses the
  * same process as the load_database() function
  */
-void load_catalog(char filename[55])
+void load_catalog(char filename[55], Catalog *current_catalog)
 {
 	FILE *fptr;
 	fptr = fopen(filename, "r"); 
@@ -432,7 +390,7 @@ void load_catalog(char filename[55])
 	num_movies = atoi(buff);
 	for (int i = 0; i < num_movies; i++)
 	{
-		struct movie *item = (struct movie*) malloc(sizeof(struct movie));	//create new item with malloc
+		Movie *item = (Movie *)malloc(sizeof(Movie));	//create new item with malloc
 		if (item == NULL)
 		{
 			printf("error allocating memory for movie %d\n", i);
@@ -462,7 +420,11 @@ void load_catalog(char filename[55])
 		token = strtok(NULL,"\t");
 		item->distribution = atoi(token);
 
-		current_catalog[i] = item;
+		current_catalog[i].movie = item;
+	}
+	for (int j = num_movies; j < max_catalog_def; j++)
+	{
+		current_catalog[j].movie = initalize();
 	}
 	
 	printf("\n\tCatalog Loaded Sucessfully\n");
@@ -471,27 +433,28 @@ void load_catalog(char filename[55])
 /*
  * This fucntion displays the values in the current catalog.
  */
-void display_catalog()
+void display_catalog(Catalog *current_catalog)
 {
 	printf("\n\tCatalog: \n\tTitle (first 30 characters)   \t\tYear\tRun Time\tRating\tVotes\tGenre\tDistribution\n");
 	for (int i = 0; i < max_catalog_def; i++)
 	{
-		if (size_current_catalog() == 0)
+		if (size_current_catalog(current_catalog) == 0)
 		{
 			printf("\n\tCatalog Empty, add movies through the main screen\n");
 			return;
 		}
-		else if (current_catalog[i]->distribution > 0)
+
+		else if (current_catalog[i].movie->distribution > 0)
 		{	
 			printf("\n\t%d.", i+1);	
 			printf(" %-30.30s\t%d\t%s\t\t%.2f\t%d\t%s",
-				current_catalog[i]->title, 
-				current_catalog[i]->year,	current_catalog[i]->run_time, current_catalog[i]->average_rating, 
-				current_catalog[i]->num_votes, current_catalog[i]->genre
+				current_catalog[i].movie->title, 
+				current_catalog[i].movie->year,	current_catalog[i].movie->run_time, current_catalog[i].movie->average_rating, 
+				current_catalog[i].movie->num_votes, current_catalog[i].movie->genre
 			);
-			if (current_catalog[i]->distribution == 1) printf("\t%s"," Distro: BluRay");
-			if (current_catalog[i]->distribution == 2) printf("\t%s"," Distro: DVD");
-			if (current_catalog[i]->distribution == 3) printf("\t%s"," Distro: Digital");
+			if (current_catalog[i].movie->distribution == 1) printf("\t%s"," Distro: BluRay");
+			if (current_catalog[i].movie->distribution == 2) printf("\t%s"," Distro: DVD");
+			if (current_catalog[i].movie->distribution == 3) printf("\t%s"," Distro: Digital");
 		}
 	}
 	printf("\n");
@@ -502,7 +465,7 @@ void display_catalog()
  * to enter a search term to look for a movie. THe can then chose a title from the (limited)
  * results to add to the current directory.
  */
-void add_movie(struct movie **hash_array)
+void add_movie(Hash_table *hash_array, Catalog *current_catalog)
 {
 	int found = 0;
 	search_hash_display(max_search);
@@ -510,8 +473,6 @@ void add_movie(struct movie **hash_array)
 	char search_term[1024];
 
 	fgets(search_term, 1024, stdin);
-	//search_term[strlen(search_term)-1] = '\0'; 		//remove newline char for search comparison
-		
 	char *p = strrchr(search_term, '\n');  	//removes trailing newline from mainfile
 	if (p != NULL) *p = '\0';
 
@@ -522,7 +483,8 @@ void add_movie(struct movie **hash_array)
 		return;
 	}
 
-	long search_results[max_search] = {0};
+
+	unsigned long search_results[max_search] = {0};
 	if (search_hash(search_term, search_results, hash_array) != -1)
 	{   
 		printf("\tMovie result format:\n\tMovie title, Year, Runtime, Average Rating, Number of Votes, Genre\n\n"); 
@@ -556,25 +518,13 @@ void add_movie(struct movie **hash_array)
 	int distribution = dis_input(); 
 	if (distribution == -1) return;
 
-printf("%d", size_current_catalog());
 	//select result and add to current catalog
 	for(int j = 0; j < max_catalog_def; j++)
 	{
-		if (current_catalog[j]->distribution == 0)
-		{
-			//hash_array[search_results[selected_movie-1]]->distribution = distribution;
-			/*strcpy(current_catalog[j]->title, hash_array[search_results[selected_movie-1]].title);
-			current_catalog[j]->year = hash_array[search_results[selected_movie-1]].year;
-			strcpy(current_catalog[j]->run_time, hash_array[search_results[selected_movie-1]].run_time);
-			current_catalog[j]->average_rating = hash_array[search_results[selected_movie-1]].average_rating;
-			current_catalog[j]->num_votes = hash_array[search_results[selected_movie-1]].num_votes;
-			strcpy(current_catalog[j]->genre, hash_array[search_results[selected_movie-1]].genre);	*/				
-			
-			current_catalog[j] = hash_array[search_results[selected_movie-1]];
-			current_catalog[j]->distribution = distribution;
-			//printf("\ttest %d test", current_catalog[j]->distribution);
-			//print_hash_location(current_catalog[j]->location);
-
+		if (current_catalog[j].movie->distribution == 0)
+		{	
+			current_catalog[j].movie = hash_array[search_results[selected_movie-1]].movie;
+			current_catalog[j].movie->distribution = distribution;
 			printf("\n\tItem added!");
 			break;
 		}
@@ -583,19 +533,53 @@ printf("%d", size_current_catalog());
 			printf("\n\tCatalog Full, please delete a move or create a new catalog\n");
 		}		
 	}
-	printf("%d", size_current_catalog());
+
 	found = 0;
 	return;
+}
+
+/*
+ * This function searches for string matches in the hash table.
+ * The string to be searched for is put into the hash function
+ * and the returned index is used as a starting point. This is not
+ * a very effiecent searach for partial strings, but will give 
+ * close to O(1) results when the exact title is used. 
+ */
+long search_hash(char *search_term, unsigned long search_results[max_search], Hash_table *hash_array)
+{
+	int start_index = hash_function(search_term) % num_elements;
+	int index = start_index;
+	int searched = 0;
+	int found = 0;
+
+	while (strcmp(hash_array[index].movie->title, "\0") != 0 && found < max_search && searched < num_elements) 
+	{
+		char *pch = strstr(hash_array[index].movie->title, search_term);
+		if ( pch != NULL) 		//if matching substirng is found
+		{			
+			search_results[found] = hash_array[index].movie->location;
+			found++;
+		}	
+
+		index++;
+		index %= num_elements;
+
+		searched++;
+	}
+	if (searched == 0)	return -1;
+	printf("%d", found);
+	printf("\t%d", searched);
+	return 0;
 }
 
 /* 
  * This function goes tot he given location and shifts the items in the array down by 1 to delete
  * the selected movie.
  */
-void delete_movie()
+void delete_movie(Catalog *current_catalog)
 {
-	int cat_size = size_current_catalog();
-	display_catalog();
+	int cat_size = size_current_catalog(current_catalog);
+	display_catalog(current_catalog);
 	int movie_choice = remove_cat_display(cat_size);
 	
 	if (movie_choice == -1)
@@ -617,7 +601,7 @@ void delete_movie()
 /*
  * This function writes the current catalog to a given filename.
  */
-void save_catalog(int number_of_entries)
+void save_catalog(int number_of_entries, Catalog *current_catalog)
 {
 	char filename[55];
 	char buf[1024];
@@ -637,15 +621,15 @@ void save_catalog(int number_of_entries)
 			return; 
 	}
 
-	fprintf(fptr, "%d", size_current_catalog());
+	fprintf(fptr, "%d", size_current_catalog(current_catalog));
 	for (int i = 0; i < max_catalog_def; i++)
 	{
-		if (current_catalog[i]->distribution > 0)
+		if (current_catalog[i].movie->distribution > 0)
 		{
 			fprintf(fptr,	"\n%s\t%s\t%s\t%d\t%s\t%lf\t%d\t%s\t%d",
-			current_catalog[i]->id, current_catalog[i]->title,	trash, current_catalog[i]->year, 
-			current_catalog[i]->run_time, current_catalog[i]->average_rating, current_catalog[i]->num_votes, current_catalog[i]->genre, 
-			current_catalog[i]->distribution
+			current_catalog[i].movie->id, current_catalog[i].movie->title,	trash, current_catalog[i].movie->year, 
+			current_catalog[i].movie->run_time, current_catalog[i].movie->average_rating, current_catalog[i].movie->num_votes, current_catalog[i].movie->genre, 
+			current_catalog[i].movie->distribution
 			);
 		}
 	}
@@ -674,12 +658,12 @@ int remove_catalog()
 /*
  * Returns the number of non NULL slots in the current catalog
  */
-int size_current_catalog()
+int size_current_catalog(Catalog *current_catalog)
 {
 	int size = 0;
 	for(int j = 0; j < max_catalog_def; j++)
 	{
-		if (current_catalog[j]->distribution > 0)
+		if (current_catalog[j].movie->distribution > 0)
 		{
 			size++;
 		}
@@ -690,43 +674,34 @@ int size_current_catalog()
 /*
  * This function prints out the data at a given hash location in the table.
  */
-void print_hash_location(int location, struct movie **hash_array) 
+void print_movie(Movie *movie) 
 {
 		//printf("%s\t%d\t%s\t%.2f\t%d\t%s",
 		printf("\t%-30.30s\t%d\t%s\t\t%.2f\t%d\t%s\n",
-		hash_array[location]->title, hash_array[location]->year,	hash_array[location]->run_time, 
-		hash_array[location]->average_rating, hash_array[location]->num_votes, 
-		hash_array[location]->genre
+		movie->title, movie->year,	movie->run_time, 
+		movie->average_rating, movie->num_votes, 
+		movie->genre
 	);
 	//printf("\n");
 }
 
-/*
- * This function initalized the items in the current catalog to allow for theotehr functions to 
- * work.
- */
-int initialize_current_catalog()
+void print_hash_location(unsigned long loc, Hash_table *hash_array)
 {
-	struct movie *item = (struct movie*) malloc(sizeof(struct movie));	//create new item with malloc
-	if (item == NULL)
-	{
-			printf("error allocating memory for movie \n");
-	}
-	
-	for(int i = 0; i < max_catalog_def; i++)
-	{
-		current_catalog[i] = initalize(item) ;
-	}
-
-	return 1;
+		printf("\t%-30.30s\t%d\t%s\t\t%.2f\t%d\t%s\n",
+		hash_array[loc].movie->title, hash_array[loc].movie->year,	hash_array[loc].movie->run_time, 
+		hash_array[loc].movie->average_rating, hash_array[loc].movie->num_votes, 
+		hash_array[loc].movie->genre
+	);
 }
-
 
 /*
  * This function sets the given struct to NULL values.
  */
-struct movie *initalize(struct movie* item)
+Movie *initalize(void)
 {
+	Movie *item = (Movie *)malloc(sizeof(Movie));
+	//item->title = malloc(sizeof(item->title));
+	
 	strcpy(item->title, "\0");
 	item->year = 0;
 	strcpy(item->run_time,"\0");
