@@ -153,7 +153,7 @@ void load_catalog(char filename[55], Catalog *current_catalog)
  */
 void display_catalog(Catalog *current_catalog)
 {
-	printf("\n\tCatalog: \n\tTitle (first 30 characters)   \t\tYear\tRun Time\tRating\tVotes\tDistribution\tGenre\n");
+	printf("\n\tCatalog: \n\tTitle (first 30 characters)   \t\tYear\tRun Time\tRating\tVotes\tGenre\t\tDistribution\n");
 	for (int i = 0; i < current_catalog->capacity; i++)
 	{
 		if (current_catalog->size == 0)
@@ -165,16 +165,16 @@ void display_catalog(Catalog *current_catalog)
 		else if (current_catalog->movie[i]->distribution > 0)
 		{	
 			printf("\n\t%d.", i+1);	
-			printf(" %-30.30s\t%d\t%s\t\t%.2f\t%d",
+			printf(" %-30.30s\t%d\t%s\t\t%.2f\t%d\t%s",
 				current_catalog->movie[i]->title, 
 				current_catalog->movie[i]->year,	current_catalog->movie[i]->run_time, current_catalog->movie[i]->average_rating, 
-				current_catalog->movie[i]->num_votes 
+				current_catalog->movie[i]->num_votes, current_catalog->movie[i]->genre 
 			);
 			if (current_catalog->movie[i]->distribution == 1) printf("\t%s"," BluRay");
 			if (current_catalog->movie[i]->distribution == 2) printf("\t%s"," DVD");
 			if (current_catalog->movie[i]->distribution == 3) printf("\t%s"," Digital");
 
-			printf("\t%s",current_catalog->movie[i]->genre);
+			//printf("\t%s",);
 		}
 	}
 	printf("\n");

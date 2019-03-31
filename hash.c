@@ -93,33 +93,31 @@ unsigned long hash_function(char *title)
 long search_hash(char *search_term, unsigned long search_results[], Hash_table *hash_array, int max_search)
 {
 	//ADD EXACT SEARCH
-    
-    int start_index = hash_function(search_term) % hash_array->size;
-	int index = start_index;
-	int searched = 0;
-	int found = 0;
+    //int num_ele = hash_array->size;
+    int search_array[511709] = {0};//		//SET TO NUM ELEMENTS IN CATALOG
+	unsigned long index;// = start_index;
+	unsigned int searched = 0;
+	int found = 0, j = 0;
 
 	while ((found < max_search) && (searched < hash_array->size)) 
 	{
-		char *pch = strstr(hash_array->movie[index]->title, search_term);
-		if ( pch != NULL) 		//if matching substirng is found
-		{			
-			search_results[found] = hash_array->movie[index]->location;
-			
-			found++;
-		}	
-
-		
-		index++;
-		index %= hash_array->size;
-
-		searched++;
+		index = (hash_function(search_term) + (j * j)) % hash_array->size;
+		if (!search_array[index])
+		{		
+			char *pch = strstr(hash_array->movie[index]->title, search_term);
+			if ( pch != NULL) 		//if matching substirng is found
+			{			
+				search_results[found] = hash_array->movie[index]->location;
+				
+				found++;
+			}	
+			search_array[index] = 1;
+			searched++;
+		}
+		j++;
 	}
-	//printf("%d",found);
+	
 	if (searched == 0)	return -1;
-
-	//printf("%d", found);//debug
-	//printf("\t%d", searched);
 
 	return 0;
 }

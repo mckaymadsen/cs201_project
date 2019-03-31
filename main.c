@@ -4,9 +4,12 @@
  *  Date:           3/15/19
  *  Version:        2.0
  *  Description:
- *    TODO
+ *    
  *  Notes:
- * 		Requires: UI.c
+ * 		Requires: UI.c, catalog.c, hash.c, movie.c
+ * 
+ * 
+ * TODO: Cleanup, video, canel loops
  */
 
 #include <stdlib.h>
@@ -133,7 +136,7 @@ int main()
 
 /*
  * This function adds movies to the current catalog. To add a movie, the user is prompted
- * to enter a search term to look for a movie. THe can then chose a title from the (limited)
+ * to enter a search term to look for a movie. The can then chose a title from the (limited)
  * results to add to the current directory.
  */
 void add_movie(Hash_table *hash_array, Catalog *current_catalog, int max_search)
@@ -141,11 +144,16 @@ void add_movie(Hash_table *hash_array, Catalog *current_catalog, int max_search)
 	int found = 0, selector = 0;
 	long search_exact_result = -1;
 	long selected_result = 0;
+	unsigned long search_results[max_search];		
+	for(int j = 0; j < max_search; j++)
+	{
+		search_results[j] = 0;
+	}
 
 	printf("\n\tThere are 2 types of searching available. Enter 1 for and Exact title seach.");
 	printf("\n\tThis will give the faster search time, but requires and exact title (i.e. \"Star Wars\".");
 	printf("\n\tEnter \"2\" for a substring search. This is slower, but returns any title with an occurance");
-	printf("\n\tof the search term.\n\tEnter choice: ");
+	printf("\n\tof the search term.\n\n\tEnter choice: ");
 
 	//fgets(search_term, 1024, stdin);
 	selector = search_hash_choice();			//get choice for exact search or substring
@@ -170,32 +178,26 @@ void add_movie(Hash_table *hash_array, Catalog *current_catalog, int max_search)
 			return;
 		}
 
-
-		unsigned long search_results[max_search];// = {0};
 		
-		for(int j = 0; j < max_search; j++)
-		{
-			search_results[j] = 0;
-		}
-			if (search_hash(search_term, search_results, hash_array, max_search) != -1)
-			{   
-				printf("\tMovie result format:\n\tMovie title, Year, Runtime, Average Rating, Number of Votes, Genre\n\n"); 
-				int i;
-				for (i = 0; i<max_search; i++)
-				{			
-					if (search_results[i] != 0)
-					{
-						printf("\t%d. ",i+1);
-						print_hash_location(search_results[i], hash_array);
-						found++;
-					}
+		if (search_hash(search_term, search_results, hash_array, max_search) != -1)
+		{   
+			printf("\tMovie result format:\n\tMovie title, Year, Runtime, Average Rating, Number of Votes, Genre\n\n"); 
+			int i;
+			for (i = 0; i<max_search; i++)
+			{			
+				if (search_results[i] != 0)
+				{
+					printf("\t%d. ",i+1);
+					print_hash_location(search_results[i], hash_array);
+					found++;
 				}
 			}
-			else
-			{
-				printf("\n\tNo Matches\n");
-				return;
-			}
+		}
+		else
+		{
+			printf("\n\tNo Matches\n");
+			return;
+		}
 
 		//show results and add a movie
 		printf("\n\t%d Results Found!\n",found);
@@ -208,7 +210,7 @@ void add_movie(Hash_table *hash_array, Catalog *current_catalog, int max_search)
 		int selected_movie = select_movie_input(found);
 		if (selected_movie == -1) return;
 
-		selected_result = selected_movie-1;
+		selected_result = search_results[selected_movie-1];
 	}
 	else if (selector == 1)						//exact search selected
 	{
