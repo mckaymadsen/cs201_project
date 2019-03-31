@@ -70,6 +70,15 @@ int create_catalog()
 	}
 }
 
+ int clear_current_catalog(Catalog *current_catalog)
+ {
+	for(int i = 0; i < current_catalog->capacity; i++)
+	{
+		current_catalog->movie[i] = initalize();
+	}
+	 
+	 return 0;
+ }
 
 /*
  * This function loads a catalog when given a filename (string). If not string is given
@@ -164,7 +173,7 @@ void load_catalog(char filename[55], Catalog *current_catalog)
 void display_catalog(Catalog *current_catalog)
 {
 	printf("\n\n\tCatalog: \n\n\t    Title (first 30 characters)     Year    Run Time    Rating   Votes      Genre         Distribution\n");
-	printf("%d", current_catalog->size);
+
 	for (int i = 0; i < current_catalog->capacity; i++)
 	{
 		if (current_catalog->size == 0)

@@ -11,6 +11,7 @@ typedef struct Catalog
 extern Catalog *newCatalog(unsigned int max_catalog);
 
 extern int create_catalog(void);
+extern int clear_current_catalog(Catalog *current_catalog);
 
 extern int open_catalog(int load_flag, Catalog *current_catalog);
 

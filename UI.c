@@ -35,10 +35,10 @@ void display_start()
 void main_menu_display()
 {
     printf("\n\tChoose an Action:\n\n");
-    printf("\t1. Create a blank catalog\n");
-    printf("\t2. Read/Load a catalog\n");
-    printf("\t3. Update the contents of the current catalog\n");
-    printf("\t4. Remove a catalog file\n");
+    printf("\t1. Create a blank catalog / Clear current catalog -- creates a blank file or clears the current catalog\n");
+    printf("\t2. Read/Load a catalog  -- options to load or display an existing catalog and save the current catalog\n");
+    printf("\t3. Update the contents of the current catalog -- add or remove movies, save catalog\n");
+    printf("\t4. Remove a catalog file -- delete a catalog file\n");
     printf("\t5. Exit\n");
     printf("\n\tEnter 1 - 5, and then press enter: ");
 }
@@ -93,9 +93,10 @@ void create_catalog_display(int max_catalog)
     printf("\n\tListed below are the available options. A created catalog will be blank.\n");
     printf("\tOnce a catalog is created, movies can be added using the update catalog option\n");
     printf("\tin the main menu.\n");
-    printf("\n\t1. Create a blank catalog\n");
-    printf("\t2. Go back \n");
-    printf("\n\tEnter 1-2, then press enter: ");
+    printf("\n\t1. Create a blank catalog file\n");
+    printf("\t2. Clear current catalog \n");
+    printf("\t3. Go back");
+    printf("\n\tEnter 1-3, then press enter: ");
 }
 
 /*
@@ -112,7 +113,7 @@ int create_catalog_input()
     fgets(buf, BUFSIZ, stdin);
     while (!valid_input) 
     {
-        if ((sscanf(buf, "%d", &choice) == 1) && (choice > 0 && choice < 3 ))
+        if ((sscanf(buf, "%d", &choice) == 1) && (choice > 0 && choice < 4 ))
         {
                 valid_input = 1;
                 return choice;
@@ -125,7 +126,7 @@ int create_catalog_input()
         {     
             printf("\n\n\tInvlaid Input, please try again. Type \"Exit\" to quit: ");
             fgets(buf, BUFSIZ, stdin);
-            if ((sscanf(buf, "%d", &choice) == 1) && (choice > 0 && choice < 3 ))
+            if ((sscanf(buf, "%d", &choice) == 1) && (choice > 0 && choice < 4 ))
             {
                 valid_input = 1;
                 return choice;

@@ -114,9 +114,19 @@ int main()
 					create_catalog_display(max_catalog);
 					create_catalog_choice = create_catalog_input();
 
-					if (create_catalog_choice == 2) break;
-					else if (create_catalog() == 1) printf("\n\tCatalog created sucessfully!\n");//goto main menu somehow
-					
+					if (create_catalog_choice == 3) break;
+					else if (create_catalog_choice == 1)
+					{
+						int result = create_catalog();
+						if(result != -1)
+							printf("\n\tCatalog created sucessfully!\n");//goto main menu somehow
+					}
+					else if (create_catalog_choice == 2)
+					{
+						int result = clear_current_catalog(current_catalog);
+						if(result != -1)
+							printf("\n\tCleared current catalog!\n");
+					}
 					create_catalog_choice = 0;	//reset choice
 					break;
 
