@@ -27,7 +27,7 @@ custom datset was chosen due to the added value of having the average ratings an
  This program operates on the idea of having a current catalog. Movies can be added and removed from this structure.
  The catalog can be save to and load from files using the program. Do not attempt to edit these files.
 
- A video of the operation is available here: [LINK HERE]() --currently dead
+ A video of the operation is available here: [LINK HERE](https://youtu.be/sU1Od9_yBAo) 
  
  **Setup**
 
