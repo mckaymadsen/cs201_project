@@ -173,15 +173,10 @@ void display_catalog(Catalog *current_catalog)
 			if (current_catalog->movie[i]->distribution == 1) printf("\t%s"," BluRay");
 			if (current_catalog->movie[i]->distribution == 2) printf("\t%s"," DVD");
 			if (current_catalog->movie[i]->distribution == 3) printf("\t%s"," Digital");
-
-			//printf("\t%s",);
 		}
 	}
 	printf("\n");
 }
-
-
-
 
 
 /* 

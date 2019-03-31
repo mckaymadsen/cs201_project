@@ -163,7 +163,7 @@ void add_movie(Hash_table *hash_array, Catalog *current_catalog, int max_search)
 	{	
 		search_hash_display(max_search);
 		
-		printf("\t");
+		//printf("\t");
 		
 		char search_term[1024];
 
