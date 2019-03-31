@@ -1,8 +1,8 @@
-#Sourced From Joey Adams_Stack Overflow
+#Partially sourced From Joey Adams_Stack Overflow
 TARGET = prog
 LIBS = -lm
 CC = gcc
-CFLAGS = -g -Wall -std=c11
+CFLAGS = -g -Wall -Werror -std=c11
 
 .PHONY: default all clean
 
@@ -22,4 +22,8 @@ $(TARGET): $(OBJECTS)
 
 clean:
 	-rm -f *.o
+	-rm -f *.gch
 	-rm -f $(TARGET)
+
+run:
+	./prog

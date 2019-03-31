@@ -5,7 +5,15 @@
 #include "movie.h"
 #include "hash.h"
 
+/*
+ *	Contains the hash table data structure and corresponding functions
+ */
 
+
+/*
+ *	Constructor for hashtable. Mallocs the table and all components.
+ *	The initalize function mallocs and sets the location values to NULL or 0	
+ */
 Hash_table *newHash_table(unsigned int num_elements)
 {
     Hash_table *hash_array = (Hash_table*)malloc(sizeof(Hash_table));
@@ -22,6 +30,7 @@ Hash_table *newHash_table(unsigned int num_elements)
     return hash_array;
 }
 
+
 /*
  * This function loads the database. It reads in a line from the defeined datafile
  * and parses it into a temorary item using strtok. The title is the hashed to get
@@ -31,9 +40,8 @@ Hash_table *newHash_table(unsigned int num_elements)
 void load_database(Hash_table *hash_array)
 {
 	FILE *fptr;										//create the file opener
-	//fptr = fopen("cs201database_TAB.txt", "r");		//open database 
-	//fptr = fopen("test_data2.txt", "r");//debug
-	fptr = fopen("finalV3.txt", "r");	
+	fptr = fopen("cs201combined_TAB.txt", "r");		//open database 
+		
 	char buff[1024];
 	//int q = 1;
 	int i = 0;
@@ -69,6 +77,7 @@ void load_database(Hash_table *hash_array)
 	return;
 }
 
+
 /*
  * This function returns the hash value when given a string
  * It is a copy of the DJB2 hash function see here:
@@ -82,6 +91,7 @@ unsigned long hash_function(char *title)
     hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
   return hash;
 }
+
 
 /*
  * This function searches for string matches in the hash table.
@@ -122,6 +132,7 @@ long search_hash(char *search_term, unsigned long search_results[], Hash_table *
 	return 0;
 }
 
+
 /*
  *	This function searchs for an exact match and returns it with a ~O(1) search time.
  * 	Only works with exact titles.
@@ -141,9 +152,12 @@ long search_exact_hash(char *search_term, Hash_table *hash_array)
 }
 
 
+/*
+ *	Prints out the formatted data of a given location in the hash table
+ */
 void print_hash_location(unsigned long loc, Hash_table *hash_array)
 {
-	printf("\t%-30.30s\t%d\t%s\t\t%.2f\t%d\t%s\n",
+	printf(" %-30.30s  %-6d  %-8s    %-7.2f  %-11d%-13s\n",
 		hash_array->movie[loc]->title, hash_array->movie[loc]->year,	hash_array->movie[loc]->run_time, 
 		hash_array->movie[loc]->average_rating, hash_array->movie[loc]->num_votes, 
 		hash_array->movie[loc]->genre

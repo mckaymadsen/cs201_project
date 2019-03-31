@@ -2,9 +2,11 @@
 #include <string.h>
 #include <stdio.h>
 
-
 #include "movie.h"
 
+/*
+ *	Contains the constructors for the movie
+ */
 
 
 Movie **newArray(unsigned int size)
@@ -60,7 +62,7 @@ Movie *newMovie(FILE *fptr, int cat_flag, char buff[1024])
 		item->num_votes =  atoi(token);
 		token = strtok(NULL,"\t");
 		item->distribution = atoi(token);
-		token = strtok(NULL,"\n");
+		token = strtok(NULL,"\r\n");
 		strcpy(item->genre, token);
 
         return item;

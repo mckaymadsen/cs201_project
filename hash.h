@@ -1,9 +1,9 @@
 #ifndef _hash_h_
 #define _hash_h_
 
-//#include "movie.h"
-
-//typedef struct Hash_table Hash_table;
+/*
+ *  Header for hash.c file.
+ */
 
 typedef struct Hash_table
 {
@@ -16,13 +16,11 @@ typedef struct Hash_table
 extern Hash_table *newHash_table(unsigned int num_elements);
 
 extern void load_database(Hash_table *hash_array);
-
-extern void print_hash_location(unsigned long loc, Hash_table *hash_array);
 extern unsigned long hash_function(char *title);
 
 extern long search_hash(char search_term[50], unsigned long search_results[], Hash_table *hash_array, int max_search);
 extern long search_exact_hash(char *search_term, Hash_table *hash_array);
 
-
+extern void print_hash_location(unsigned long loc, Hash_table *hash_array);
 
 #endif

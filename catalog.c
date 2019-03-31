@@ -7,10 +7,14 @@
 #include "catalog.h"
 #include "UI.h"
 
+/*
+ *	This file contains the drivers for the catalog data structure
+ */
 
 
-
-
+/*
+ *	Constructor for the catalog. Mallocs the components 
+ */
 Catalog *newCatalog(unsigned int max_catalog)
 {
     Catalog *catalog = (Catalog*)malloc(sizeof(Catalog));
@@ -27,6 +31,7 @@ Catalog *newCatalog(unsigned int max_catalog)
     catalog->size = max_catalog;
     return catalog;
 }
+
 
 /*
  * This function returns a 1 when a catalog is created sucessfully and a -1 if it failed.
@@ -62,6 +67,7 @@ int create_catalog()
 		return -1;
 	}
 }
+
 
 /*
  * This function loads a catalog when given a filename (string). If not string is given
@@ -109,6 +115,7 @@ int open_catalog(int load_flag, Catalog *current_catalog)
 	return 0;
 }
 
+
 /*
  * This function loads a text file containing movie data into the current catalog. Is uses the
  * same process as the load_database() function
@@ -148,12 +155,13 @@ void load_catalog(char filename[55], Catalog *current_catalog)
 	printf("\n\tCatalog Loaded Sucessfully\n");
 }
 
+
 /*
  * This fucntion displays the values in the current catalog.
  */
 void display_catalog(Catalog *current_catalog)
 {
-	printf("\n\tCatalog: \n\tTitle (first 30 characters)   \t\tYear\tRun Time\tRating\tVotes\tGenre\t\tDistribution\n");
+	printf("\n\n\tCatalog: \n\t   Title (first 30 characters)     Year    Run Time    Rating   Votes      Genre         Distribution\n");
 	for (int i = 0; i < current_catalog->capacity; i++)
 	{
 		if (current_catalog->size == 0)
@@ -165,14 +173,14 @@ void display_catalog(Catalog *current_catalog)
 		else if (current_catalog->movie[i]->distribution > 0)
 		{	
 			printf("\n\t%d.", i+1);	
-			printf(" %-30.30s\t%d\t%s\t\t%.2f\t%d\t%s",
+			printf(" %-30.30s  %-6d  %-8s    %-7.2f  %-11d%-13s ",
 				current_catalog->movie[i]->title, 
 				current_catalog->movie[i]->year,	current_catalog->movie[i]->run_time, current_catalog->movie[i]->average_rating, 
 				current_catalog->movie[i]->num_votes, current_catalog->movie[i]->genre 
 			);
-			if (current_catalog->movie[i]->distribution == 1) printf("\t%s"," BluRay");
-			if (current_catalog->movie[i]->distribution == 2) printf("\t%s"," DVD");
-			if (current_catalog->movie[i]->distribution == 3) printf("\t%s"," Digital");
+			if (current_catalog->movie[i]->distribution == 1) printf("%s","BluRay");
+			if (current_catalog->movie[i]->distribution == 2) printf("%s","DVD");
+			if (current_catalog->movie[i]->distribution == 3) printf("%s","Digital");
 		}
 	}
 	printf("\n");
@@ -180,7 +188,7 @@ void display_catalog(Catalog *current_catalog)
 
 
 /* 
- * This function goes tot he given location and shifts the items in the array down by 1 to delete
+ * This function goes to the given location and shifts the items in the array down by 1 to delete
  * the selected movie.
  */
 void delete_movie(Catalog *current_catalog)
@@ -197,7 +205,7 @@ void delete_movie(Catalog *current_catalog)
 	for (int i = movie_choice-1; i < current_catalog->capacity; i++)
 	{
 		if (i < current_catalog->capacity-1)
-			current_catalog->movie[i] = current_catalog->movie[i+1]; 
+			current_catalog->movie[i] = current_catalog->movie[i+1];  		//LLOOOKK here
 	}
 
 	printf("\n\tMovie Sucessfully Removed\n");
@@ -232,13 +240,10 @@ void save_catalog(Catalog *current_catalog)
 	{
 		if (current_catalog->movie[i]->distribution > 0)
 		{
-			/*char *p = strrchr(current_catalog[i].movie->genre, '\n');  	//removes trailing newline from mainfile
-			if (p != NULL) *p = '\0';*/
-
 			fprintf(fptr,	"\n%s\t%s\t%s\t%d\t%s\t%lf\t%d\t%d\t%s",
-			current_catalog->movie[i]->id, current_catalog->movie[i]->title,	trash, current_catalog->movie[i]->year, 
-			current_catalog->movie[i]->run_time, current_catalog->movie[i]->average_rating, current_catalog->movie[i]->num_votes, 
-			current_catalog->movie[i]->distribution,	current_catalog->movie[i]->genre 
+				current_catalog->movie[i]->id, current_catalog->movie[i]->title,	trash, current_catalog->movie[i]->year, 
+				current_catalog->movie[i]->run_time, current_catalog->movie[i]->average_rating, current_catalog->movie[i]->num_votes, 
+				current_catalog->movie[i]->distribution,	current_catalog->movie[i]->genre 
 			
 			);
 		}

@@ -1,8 +1,10 @@
 #ifndef _movie_H_
 #define _movie_h_
 
-
-
+/*
+ *	Header file for the movie.c file. Contains the struct definition and 
+ *	function declarations.
+ */
 
 typedef struct Movie
 {	
@@ -10,7 +12,7 @@ typedef struct Movie
 	char title[100];		//Title of movie
 	unsigned long location;	//array location/hash key
 	int year;				//Year movie was released
-	char run_time[15];
+	char run_time[15];		//runtime for the movie
 	char genre[100];		//top genres
 	double average_rating;	//average rating
 	int num_votes;			//number of votes for rating
