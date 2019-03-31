@@ -31,7 +31,7 @@ void display_start()
 void main_menu_display()
 {
     printf("\n\tChoose an Action:\n\n");
-    printf("\t1. Create a new catalog\n");
+    printf("\t1. Create a blank catalog\n");
     printf("\t2. Read/Load a catalog\n");
     printf("\t3. Update a catalog\n");
     printf("\t4. Remove a catalog\n");
@@ -85,11 +85,11 @@ int main_menu_input()
  */
 void create_catalog_display(int max_catalog)
 {
-    printf("\n\tCreate a catalog menu!\n\tThe max size of a catalog is currently set to %d\n", max_catalog);
+    printf("\n\tCreate a blank catalog menu!\n\tThe max size of a catalog is currently set to %d\n", max_catalog);
     printf("\n\tListed below are the available options. A created catalog will be blank.\n");
     printf("\tOnce a catalog is created, movies can be added using the update catalog option\n");
     printf("\tin the main menu.\n");
-    printf("\n\t1. Create a catalog\n");
+    printf("\n\t1. Create a blank catalog\n");
     printf("\t2. Go back \n");
     printf("\n\tEnter 1-2, then press enter: ");
 }
@@ -248,6 +248,52 @@ void search_hash_display(int max_search)
     printf("\tThe max number of returned results is set to %d\n", max_search);
     printf("\tTo get more results, refine your search\n");
     printf("\n\tEnter search term (min of 3 characters, max of 150 characters): ");
+}
+
+/*
+ * Input getter for update catalog function
+ */
+int search_hash_choice()
+{
+    int valid_input = 0;
+	int choice = 0;
+
+    char buf[BUFSIZ];
+
+    fgets(buf, BUFSIZ, stdin);
+    while (!valid_input) 
+    {
+        if ((sscanf(buf, "%d", &choice) == 1) && (choice > 0 && choice < 3 ))
+        {
+                valid_input = 1;
+                return choice;
+        }
+        else if (strcmp(buf,"Cancel\n") == 0)
+        {
+            return -1;
+        }
+        else
+        {     
+            printf("\n\n\tInvlaid Input, please try again. Type \"Cancel\" to quit: ");
+            fgets(buf, BUFSIZ, stdin);
+            if ((sscanf(buf, "%d", &choice) == 1) && (choice > 0 && choice < 3 ))
+            {
+                valid_input = 1;
+                return choice;
+            } 
+        }        
+    }
+    
+    return -1;
+}
+
+/*
+ * Display driver for exact search
+ */
+void search_exact_hash_display()
+{
+    printf("\n\tSearch for an exact movie!\n");
+    printf("\n\tEnter the movie title (case sensitive): ");
 }
 
 /*
