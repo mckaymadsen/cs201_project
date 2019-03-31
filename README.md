@@ -14,7 +14,7 @@ This dataset combines the "basic" and "ratings" datasets found on IMDB's website
 custom dataset was chosen due to the added value of having the average ratings and votes included. 
 
 **Statistics:**
-- File Size:   30.8MB (30,769,945 bytes)
+- File Size:   27.6 MB
 - Content:     511,709 unique movies
   - Each title contains the following information: 
   - Title 
