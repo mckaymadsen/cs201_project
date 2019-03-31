@@ -10,7 +10,7 @@ or by using the following command:
 
  "wget -v -O cs201combined_TAB.txt -L https://alabama.box.com/shared/static/jzs7vasu65euxnp4dbxca543em46pyvb.txt"
 
-This dataset combines the "basic" and "ratings" datasets found on IMDB's website. The program will only run on this specific dataset. MAKE SURE the file is called "cs201combined_TAB.txt" Any other name will not work. A
+This dataset combines the "basic" and "ratings" datasets for movies found on IMDB's website. The program will only run on this specific dataset as it contains additional information and has non-movie items removed. MAKE SURE the file is called "cs201combined_TAB.txt" Any other name will not work. A
 custom dataset was chosen due to the added value of having the average ratings and votes included. 
 
 **Statistics:**
