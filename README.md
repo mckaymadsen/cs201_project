@@ -23,6 +23,9 @@ custom datset was chosen due ot the added value of having the average ratings an
  
  
  ## Operation
+
+ This program operates on the idea of having a current catalog. Movies can be added and removed from this structure.
+ The catalog can be save to and load from files using the program. Do not attempt to edit these files.
  
  **Setup**
 
@@ -31,14 +34,15 @@ custom datset was chosen due ot the added value of having the average ratings an
  "wget -v -O cs201combined_TAB.txt -L https://alabama.box.com/shared/static/jzs7vasu65euxnp4dbxca543em46pyvb.txt". 
  
  
- If, for some reason this doesnt work, the file can be manually downloaded from the link in the Dataset section.
+ If, for some reason this doesnt work, the file can be manually downloaded from the link in the Dataset section. 
+ The code will only run with this data file.
 
  To run the program, type "make" in the terminal. To run the program, type "make run" or "./prog". Expect for the database to take ~3 seconds to load.
  A message will appear showing the dataset has been loaded and you can begin using the program.
 
  **Using the Program**
 
- All menu choice are done by selecting a number corresponding to an option. There is an option to "Go back" or "Exit" each menu.
+ All menu choice are done by selecting a number corresponding to an option. There is an option to "Go back" or Exit/Cancel on most menus.
  This will return you to the previous menu or exit the program.
 
  ***Constraints***
@@ -48,6 +52,7 @@ custom datset was chosen due ot the added value of having the average ratings an
  ***Tips***
 
  Make sure you've loaded the catalog you want to edit!
+ Do not edit the catlog files/ Editing them will make the program display unexpected behavior and potentially crash.
 
  ## Dicussion of Design Choices
  

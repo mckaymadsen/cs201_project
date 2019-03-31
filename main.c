@@ -28,13 +28,17 @@ int main()
 	int num_elements = 511709;
 	int max_search = 15;
 
+	int load_flag = 0;
+
 	Hash_table *hash_array = newHash_table(num_elements);
 	Catalog *current_catalog = newCatalog(max_catalog);
 
 	display_start();
 	
 	printf("\n\tLoading dataset ");
-	load_database(hash_array);
+	load_flag = load_database(hash_array);
+	if (load_flag == -1)	return 0;			//failsafe for bad data file
+
 	printf("Load Complete\n");	
 
 	int main_menu_choice = 0;
@@ -250,6 +254,7 @@ void add_movie(Hash_table *hash_array, Catalog *current_catalog, int max_search)
 		{	
 			current_catalog->movie[j] = hash_array->movie[selected_result];
 			current_catalog->movie[j]->distribution = distribution;
+			current_catalog->size++;
 			printf("\n\tItem added!");
 			break;
 		}

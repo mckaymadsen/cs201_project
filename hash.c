@@ -40,10 +40,15 @@ Hash_table *newHash_table(unsigned int num_elements)
  * the hash location. The DJBZ hash algrothim is used. Linear probing is used to resolve 
  * collisions. The hash table is hard coded to have enough slots to fit all results. 
  */
-void load_database(Hash_table *hash_array)
+int load_database(Hash_table *hash_array)
 {
 	FILE *fptr;										//create the file opener
 	fptr = fopen("cs201combined_TAB.txt", "r");		//open database 
+	if (fptr == NULL)
+	{
+		printf("Error loading database. Check the filename/readme. Exiting\n");
+		return -1;
+	}
 		
 	char buff[1024];
 	//int q = 1;
@@ -77,7 +82,7 @@ void load_database(Hash_table *hash_array)
 	}
 	
 	fclose(fptr);
-	return;
+	return 1;
 }
 
 

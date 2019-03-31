@@ -31,7 +31,6 @@ Catalog *newCatalog(unsigned int max_catalog)
             catalog->movie[i] = initalize();
     }
 
-    catalog->size = max_catalog;
     return catalog;
 }
 
@@ -146,7 +145,7 @@ void load_catalog(char filename[55], Catalog *current_catalog)
 	for (int i = 0; i < num_movies; i++)
 	{
 		Movie *item;
-        item = newMovie(fptr,1, buff);
+        item = newMovie(fptr, 1, buff);
 
 		current_catalog->movie[i] = item;
 	}
@@ -165,6 +164,7 @@ void load_catalog(char filename[55], Catalog *current_catalog)
 void display_catalog(Catalog *current_catalog)
 {
 	printf("\n\n\tCatalog: \n\n\t    Title (first 30 characters)     Year    Run Time    Rating   Votes      Genre         Distribution\n");
+	printf("%d", current_catalog->size);
 	for (int i = 0; i < current_catalog->capacity; i++)
 	{
 		if (current_catalog->size == 0)
@@ -196,20 +196,32 @@ void display_catalog(Catalog *current_catalog)
  */
 void delete_movie(Catalog *current_catalog)
 {
+	if(current_catalog->size == 0) 
+	{
+		printf("\n\tNo movies in the catalog\n");
+		return;
+	}
+	
 	display_catalog(current_catalog);
 	int movie_choice = remove_cat_display(current_catalog->size);
-	
+
 	if (movie_choice == -1)
 	{
 		printf("\n\tMovie removal unsucessful, please try again\n");
 		return;
 	}
+	int index = movie_choice -1;
 
-	for (int i = movie_choice-1; i < current_catalog->capacity; i++)
+	current_catalog->movie[index] = initalize();
+	for(int i = 0; i < current_catalog->capacity; i++)
 	{
-		if (i < current_catalog->capacity-1)
-			current_catalog->movie[i] = current_catalog->movie[i+1];  		//LLOOOKK here
+		if ((current_catalog->movie[i]->distribution == 0) && (i != current_catalog->capacity-1))
+		{	
+			current_catalog->movie[i] = current_catalog->movie[i+1];
+			current_catalog->movie[i+1] = initalize();
+		}
 	}
+	current_catalog->size--;
 
 	printf("\n\tMovie Sucessfully Removed\n");
 	return;

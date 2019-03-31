@@ -21,8 +21,10 @@ void display_start()
     printf("\tCS 201 - Spring 2018 - Portfolio Project\n");
     printf("\tCreated By: McKay Madsen\n\n");
     printf("\tThis program provides CRUD access to the IMDB movie database\n");
-    printf("\tPlease refer to the GitHub for instructions and read the README before use.");
-    printf("\n");
+    printf("\tPlease refer to the GitHub for instructions and read the README before use.\n");
+    printf("\n\tThis program operates on the idea of a current catalog. All changes are made to this");
+    printf("\n\tand these changes can be saved to a file. The current catalog can also be loaded from");
+    printf("\n\tone of these files\n\tHave fun!");
 
     return;
 }
@@ -35,8 +37,8 @@ void main_menu_display()
     printf("\n\tChoose an Action:\n\n");
     printf("\t1. Create a blank catalog\n");
     printf("\t2. Read/Load a catalog\n");
-    printf("\t3. Update a catalog\n");
-    printf("\t4. Remove a catalog\n");
+    printf("\t3. Update the contents of the current catalog\n");
+    printf("\t4. Remove a catalog file\n");
     printf("\t5. Exit\n");
     printf("\n\tEnter 1 - 5, and then press enter: ");
 }
