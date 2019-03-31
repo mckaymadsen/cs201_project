@@ -1,13 +1,16 @@
 /*  Filename:       UI.c
  *  Author:         McKay Madsen
- *  Date:           3/15/19
+ *  Updated:        3/25/19
  *  Description:
  *      Contains display functions and input getters for the portfolio project
+ *      Each one prompts for input and loops until valid input is received or and
+ *      Exit condition has been reached.
  */
 
 #include <stdio.h>
 #include <string.h>
 #include "UI.h"
+
 
 /* 
  * Displays the program start text to the terminal
@@ -18,8 +21,7 @@ void display_start()
     printf("\tCS 201 - Spring 2018 - Portfolio Project\n");
     printf("\tCreated By: McKay Madsen\n\n");
     printf("\tThis program provides CRUD access to the IMDB movie database\n");
-    printf("\tPlease refefer to the GitHub for instructions");
-
+    printf("\tPlease refer to the GitHub for instructions and read the README before use.");
     printf("\n");
 
     return;
@@ -143,8 +145,8 @@ void read_catalog_display(int max_catalog)
     printf("\n\t1. Display an existing catalog");
     printf("\n\t2. Display the current catalog");
     printf("\n\t3. Load an existing catalog");
-    printf("\n\t4. Save the current catalog\n");
-    printf("\t5. Go back \n");
+    printf("\n\t4. Save the current catalog");
+    printf("\n\t5. Go back \n");
     printf("\n\tEnter 1-5, then press enter: ");
 }
 
@@ -347,7 +349,7 @@ int dis_input()
 
     printf("\n\tPlease select a distrbuition method by entering the corresponding number.");
     printf("\n\tEnter \"Cancel\" to quit.");
-    printf("\n\t1. BluRay.\t2. DVD\t3. Digital: \n\tEnter choice: ");
+    printf("\n\t1. BluRay   2. DVD   3. Digital \n\tEnter choice: ");
     fgets(buf, BUFSIZ, stdin);
     char *p = strrchr(buf, '\n');  	//removes trailing newline 
 	if (p != NULL) *p = '\0';
@@ -418,6 +420,5 @@ int remove_cat_display(int cat_size)
     }
     
     return -1;
-    //return 0;
 }
 

@@ -1,10 +1,6 @@
 #ifndef _catalog_h_
 #define _catalog_h_
 
-/* 
- *  Header file for catalog.c. Contains the struct definitions and functions.
- */
-
 typedef struct Catalog
 {
 	Movie **movie;

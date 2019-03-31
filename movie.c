@@ -1,14 +1,20 @@
+/*  Filename:       movie.c
+ *  Author:         McKay Madsen
+ *  Updated:        3/25/19
+ *  Description:
+ *      Contains the movie struct and related functions
+ */
+
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 
 #include "movie.h"
 
+
 /*
- *	Contains the constructors for the movie
+ *	Constructor for the movie
  */
-
-
 Movie **newArray(unsigned int size)
 {
     Movie **movie = malloc(sizeof(Movie*) * size);

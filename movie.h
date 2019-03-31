@@ -1,11 +1,6 @@
 #ifndef _movie_H_
 #define _movie_h_
 
-/*
- *	Header file for the movie.c file. Contains the struct definition and 
- *	function declarations.
- */
-
 typedef struct Movie
 {	
 	char id[11];			//imdb given uniqie ID

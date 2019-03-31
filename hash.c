@@ -1,13 +1,16 @@
+/*  Filename:       hash.c
+ *  Author:         McKay Madsen
+ *  Updated:        3/30/19
+ *  Description:
+ *      Contains the hash table data structure and corresponding functions
+ */
+
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 
 #include "movie.h"
 #include "hash.h"
-
-/*
- *	Contains the hash table data structure and corresponding functions
- */
 
 
 /*

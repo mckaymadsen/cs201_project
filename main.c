@@ -18,7 +18,9 @@
 #include "catalog.h"
 #include "hash.h"
 
+
 void add_movie(Hash_table *hash_array, Catalog *current_catalog, int max_search);
+
 
 int main() 
 {
@@ -179,7 +181,7 @@ void add_movie(Hash_table *hash_array, Catalog *current_catalog, int max_search)
 		
 		if (search_hash(search_term, search_results, hash_array, max_search) != -1)	//if search_hash finds something
 		{   
-			printf("\n\t     Title (first 30 characters)     Year    Run Time    Rating   Votes      Genre         Distribution\n");
+			printf("\n\t     Title (first 30 characters)     Year    Run Time    Rating   Votes      Genre \n");
 			int i;
 			for (i = 0; i<max_search; i++)
 			{			

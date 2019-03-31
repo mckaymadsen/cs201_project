@@ -1,10 +1,6 @@
 #ifndef _hash_h_
 #define _hash_h_
 
-/*
- *  Header for hash.c file.
- */
-
 typedef struct Hash_table
 {
 	Movie **movie;

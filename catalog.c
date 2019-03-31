@@ -1,3 +1,10 @@
+/*  Filename:       catalog.c
+ *  Author:         McKay Madsen
+ *  Updated:        3/30/19
+ *  Description:
+ *      This file contains the drivers for the catalog data structure
+ */
+
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -6,10 +13,6 @@
 #include "hash.h"
 #include "catalog.h"
 #include "UI.h"
-
-/*
- *	This file contains the drivers for the catalog data structure
- */
 
 
 /*
@@ -161,7 +164,7 @@ void load_catalog(char filename[55], Catalog *current_catalog)
  */
 void display_catalog(Catalog *current_catalog)
 {
-	printf("\n\n\tCatalog: \n\t   Title (first 30 characters)     Year    Run Time    Rating   Votes      Genre         Distribution\n");
+	printf("\n\n\tCatalog: \n\n\t    Title (first 30 characters)     Year    Run Time    Rating   Votes      Genre         Distribution\n");
 	for (int i = 0; i < current_catalog->capacity; i++)
 	{
 		if (current_catalog->size == 0)
@@ -172,7 +175,7 @@ void display_catalog(Catalog *current_catalog)
 
 		else if (current_catalog->movie[i]->distribution > 0)
 		{	
-			printf("\n\t%d.", i+1);	
+			printf("\n\t%2d.", i+1);	
 			printf(" %-30.30s  %-6d  %-8s    %-7.2f  %-11d%-13s ",
 				current_catalog->movie[i]->title, 
 				current_catalog->movie[i]->year,	current_catalog->movie[i]->run_time, current_catalog->movie[i]->average_rating, 
