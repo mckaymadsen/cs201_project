@@ -20,15 +20,18 @@
  */
 Catalog *newCatalog(unsigned int max_catalog)
 {
-    Catalog *catalog = (Catalog*)malloc(sizeof(Catalog));
+    //allocate memory for the structure
+	Catalog *catalog = (Catalog*)malloc(sizeof(Catalog));
 
     catalog->capacity = max_catalog;
     catalog->size = 0;
 
+	//Call public constructor for movie pointer array -> allocates memory
     catalog->movie = newArray(max_catalog);
     for(int i = 0; i < max_catalog; i++)
     {
-            catalog->movie[i] = initalize();
+        //initalize each movie to NULL
+		catalog->movie[i] = initalize();
     }
 
     return catalog;
@@ -70,15 +73,21 @@ int create_catalog()
 	}
 }
 
+
+/*
+ *	Clears the current catalog and sets to NULL
+ */
  int clear_current_catalog(Catalog *current_catalog)
  {
 	for(int i = 0; i < current_catalog->capacity; i++)
 	{
+		//resets catalog to NULL
 		current_catalog->movie[i] = initalize();
 	}
 	 
 	 return 0;
  }
+ 
 
 /*
  * This function loads a catalog when given a filename (string). If not string is given

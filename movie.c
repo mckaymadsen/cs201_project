@@ -17,7 +17,8 @@
  */
 Movie **newArray(unsigned int size)
 {
-    Movie **movie = malloc(sizeof(Movie*) * size);
+    //allocate memory for structure
+	Movie **movie = malloc(sizeof(Movie*) * size);
     return movie;
 }
 
@@ -40,10 +41,13 @@ Movie *initalize(void)
 	return item;
 }
 
+
+/*
+ *	Returns malloced movie struct with parsed data
+ * 	Used to read catalog and dataset
+ */
 Movie *newMovie(FILE *fptr, int cat_flag, char buff[1024])
 {
-    //char buff[1024];
-
     Movie *item = malloc(sizeof(Movie));	//create new item with malloc
 	if (item == NULL)
 	{
@@ -75,12 +79,11 @@ Movie *newMovie(FILE *fptr, int cat_flag, char buff[1024])
     }
     else
     {
-        //fgets(buff, 1024, fptr);
         char *token = strtok(buff,"\t");
         strcpy(item->id, token);
         token = strtok(NULL,"\t");
         strcpy(item->title, token);
-        token = strtok(NULL,"\t");					//trash this line as its the "movie" tag
+        token = strtok(NULL,"\t");				//trash this line as its the "movie" tag
         token = strtok(NULL,"\t");
         item->year = atoi(token);
         token = strtok(NULL,"\t");

@@ -19,9 +19,13 @@
  */
 Hash_table *newHash_table(unsigned int num_elements)
 {
-    Hash_table *hash_array = (Hash_table*)malloc(sizeof(Hash_table));
+    //allocate memory for the structure
+	Hash_table *hash_array = (Hash_table*)malloc(sizeof(Hash_table));
 
+	//flag for data in cell
     hash_array->empty = malloc(sizeof(int)*num_elements);
+
+	//allocate memory for movies
     hash_array->movie = newArray(num_elements);
     for(int i = 0; i < num_elements; i++)
     {
@@ -29,6 +33,7 @@ Hash_table *newHash_table(unsigned int num_elements)
             hash_array->empty[i] = 1;
     }
 
+	//set to number of movies in dataset
     hash_array->size = num_elements;
     return hash_array;
 }
@@ -51,21 +56,12 @@ int load_database(Hash_table *hash_array)
 	}
 		
 	char buff[1024];
-	//int q = 1;
 	int i = 0;
     
-	//while (i < hash_array->size)						//Read until number of items is complete (bad way, but it works)
 	while(fgets(buff,1024,fptr))
 	{
 		Movie *item = newMovie(fptr, 0, buff);
 		unsigned long hash_index = 0; 		
-		
-		//add item to hash table
-		/*while(hash_array->empty[i] != 0)
-		{			
-			//wrap around the table with quadradic probing
-			hash_index = (hash_index + (q * q))% hash_array->size;
-		}*/
 
         for(unsigned int q = 0; q < hash_array->size; q++)
         {
@@ -110,8 +106,6 @@ unsigned long hash_function(char *title)
  */
 long search_hash(char *search_term, unsigned long search_results[], Hash_table *hash_array, int max_search)
 {
-	//ADD EXACT SEARCH
-    //int num_ele = hash_array->size;
     int search_array[511709] = {0};//		//SET TO NUM ELEMENTS IN CATALOG
 	unsigned long index;// = start_index;
 	unsigned int searched = 0;
