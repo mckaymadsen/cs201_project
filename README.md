@@ -10,8 +10,8 @@ or by using the following command:
 
  "wget -v -O cs201combined_TAB.txt -L https://alabama.box.com/shared/static/jzs7vasu65euxnp4dbxca543em46pyvb.txt"
 
-This dataset combines the "basic" and "ratings" datasets found on IMDB's website. The program will only run on this specific dataset. A
-custom dataset was chosen due to the added value of having the average ratings and votes included.
+This dataset combines the "basic" and "ratings" datasets found on IMDB's website. The program will only run on this specific dataset. MAKE SURE the file is called "cs201combined_TAB.txt" Any other name will not work. A
+custom dataset was chosen due to the added value of having the average ratings and votes included. 
 
 **Statistics:**
 - File Size:   30.8MB (30,769,945 bytes)
@@ -62,13 +62,13 @@ custom dataset was chosen due to the added value of having the average ratings a
  
  **Data Structure**
  
- The main data structure used was a hash table with linear probing and the DJB2 hashig function. This was done to provide a ~O(1) 
+ The main data structure used was a hash table with quadratic probing and the DJB2 hashing function. This was done to provide a ~O(1) 
  search time when the search term is the Exact title. Quadratic probing was chosen due to the ease of use and to help avoid collisions
  as there are several movies with the same title (i.e there are over 5 movies called "Star").
 
  Each movie has its data stored in a struct.
 
- For the user catalog, a simple array of pointers was chosen due to the small size of the catalogs (<50), although this can be easily increased
+ For the user catalog, a simple array of movie struct pointers was chosen due to the small size of the catalogs (<50), although this can be easily increased
  or decreased in the code.
 
  **Searching**
