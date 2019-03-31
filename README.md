@@ -8,7 +8,7 @@ movie database (sourced from [IMDB](https://www.imdb.com/interfaces/)).
 The specific dataset used can be downloaded from the following link (hosted on UA Box): [LINK HERE](https://alabama.box.com/shared/static/jzs7vasu65euxnp4dbxca543em46pyvb.txt)
 
 This datset combines the "basic" and "ratings" datasets found on IMDB's website. The program will only run on this specific dataset. A
-custom datset was chosen due ot the added value of having the average ratings and votes included.
+custom datset was chosen due to the added value of having the average ratings and votes included.
 
 **Statistics:**
 - File Size:   30.8MB (30,769,945 bytes)
@@ -42,7 +42,6 @@ custom datset was chosen due ot the added value of having the average ratings an
  This will return you to the previous menu or exit the program.
 
  ***Constraints***
-
  Currently, the max returned search results for the substring search is set to 15 and the maximun size for the catalog is set to 50.
 
  ***Tips***
@@ -65,11 +64,9 @@ custom datset was chosen due ot the added value of having the average ratings an
  **Searching**
 
  ***Exact***
-
  The exact search is done the exact way the title is initally loaded into the hashtable. If there is a string match, it returns the location.
  
  ***Substring***
-
  The search is done with the strstr function in the string.h library. It returns a pointer to the first location of a string in the
  given second string. Becuase a hash table was used, there is really no way to avoid a linear search when looking for substrings.
  However, given the O(1) time for a Exact Title search and the increased search ability, this was deemed acceptable. Given the dataset size and complexity, 
