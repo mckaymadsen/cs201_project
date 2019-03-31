@@ -62,15 +62,16 @@ custom datset was chosen due to the added value of having the average ratings an
  or decreased in the code.
 
  **Searching**
+ 
+ Two search methods were implemented: 1. an Exact title search and 2. a Substring search.
 
  ***Exact***
- The exact search is done the exact way the title is initally loaded into the hashtable. If there is a string match, it returns the location.
+ The exact search is done the exact way the title is initally loaded into the hashtable. If there is a string match, it returns the location. This is done is ~O(1).
  
  ***Substring***
  The search is done with the strstr function in the string.h library. It returns a pointer to the first location of a string in the
  given second string. Becuase a hash table was used, there is really no way to avoid a linear search when looking for substrings.
- However, given the O(1) time for a Exact Title search and the increased search ability, this was deemed acceptable. Given the dataset size and complexity, 
- easier searching and a rapid exact title search was deemed more important.
+ 
  
  **Summary**
 
