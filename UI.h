@@ -1,5 +1,5 @@
-#ifndef UI_h_
-#define UI_h_
+#ifndef _UI_h_
+#define _UI_h_
 
 void display_start();
 void search_hash_UI();

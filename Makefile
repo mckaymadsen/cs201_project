@@ -1,4 +1,5 @@
 #Partially sourced From Joey Adams_Stack Overflow
+
 TARGET = prog
 LIBS = -lm
 CC = gcc
