@@ -6,6 +6,9 @@ movie database (sourced from [IMDB](https://www.imdb.com/interfaces/)).
 ## Dataset
 
 The specific dataset used can be downloaded from the following link (hosted on UA Box): [LINK HERE](https://alabama.box.com/shared/static/jzs7vasu65euxnp4dbxca543em46pyvb.txt)
+or by using the following command:
+
+ "wget -v -O cs201combined_TAB.txt -L https://alabama.box.com/shared/static/jzs7vasu65euxnp4dbxca543em46pyvb.txt"
 
 This dataset combines the "basic" and "ratings" datasets found on IMDB's website. The program will only run on this specific dataset. A
 custom dataset was chosen due to the added value of having the average ratings and votes included.
