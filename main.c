@@ -65,7 +65,7 @@ int main()
 				case 4 :	//REMOVE
 					remove_catalog_result = remove_catalog();
 					if (remove_catalog_result == 0) printf("\n\tCatalog removed\n");
-					else printf("\tRemoval fail. Make sure you enetered an existing filename.\n");
+					else printf("\tRemoval fail. Make sure you enetered an existing/allowed filename.\n");
 					break;
 				case 3 :	//UPDATE 
 					while(!ucc_exit)

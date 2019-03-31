@@ -281,6 +281,16 @@ int remove_catalog()
 	fgets(buf, 1024, stdin);
 	sscanf(buf, "%s", filename);
 
+	if (strcmp(filename,"cs201combined_TAB.txt") == 0)
+	{
+		printf("\n\tCannot delete the datbase file\n");
+		return -1;
+	}
+	if (strcmp(filename, "prog") == 0)
+	{
+		printf("\n\tCannot delete the program file\n");
+		return -1;
+	}	
 	int status = remove(filename);
 	return status;
 }

@@ -26,6 +26,8 @@ custom datset was chosen due to the added value of having the average ratings an
 
  This program operates on the idea of having a current catalog. Movies can be added and removed from this structure.
  The catalog can be save to and load from files using the program. Do not attempt to edit these files.
+
+ A video of the operation is available here: [LINK HERE]() --currently dead
  
  **Setup**
 
@@ -83,6 +85,11 @@ custom datset was chosen due to the added value of having the average ratings an
 Looking back, there may have been more efficient data structures for this particular data set. The hash table's advanagtes are partailly negated by the duplicate
 keys (movie titles). However, the ~O(1) search time given for exact title searches and the fact taht the dataset is not particually large allows for the hash table
 to do its job sucesfully.
+
+
+## General
+ Tested on a VM running Ubuntu 18.04.2 LTS with 1 processor, 4GB RAM, and 40GB HDD space.
+
 
  ## HELP
 Contact mmadsen@crimson.ua.edu for help with the issue.
